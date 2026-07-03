@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Act"
+config/name="act"
 run/main_scene="uid://kde6w4740t6k"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"

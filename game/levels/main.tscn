@@ -1,0 +1,123 @@
+[gd_scene format=3 uid="uid://kde6w4740t6k"]
+
+[ext_resource type="PackedScene" uid="uid://caqjnfe3wsldk" path="res://characters/act_bot/act_bot.tscn" id="1_2262g"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2262g"]
+size = Vector2(1202, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m1504"]
+size = Vector2(1202, 49)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qy63d"]
+size = Vector2(126, 13.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5k4jt"]
+size = Vector2(126, 13.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6et1j"]
+size = Vector2(126, 13.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ifaiv"]
+size = Vector2(126, 13.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wdj6m"]
+size = Vector2(671, 49)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l8qe7"]
+size = Vector2(671, 49)
+
+[node name="Main" type="Node2D" unique_id=638408645]
+
+[node name="Base" type="StaticBody2D" parent="." unique_id=74925795]
+position = Vector2(-22, 622)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Base" unique_id=1005281114]
+position = Vector2(601, 25)
+shape = SubResource("RectangleShape2D_2262g")
+
+[node name="ColorRect" type="ColorRect" parent="Base" unique_id=387284128]
+offset_right = 1202.0
+offset_bottom = 49.0
+
+[node name="Roof" type="StaticBody2D" parent="." unique_id=702198562]
+position = Vector2(-22, -27)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Roof" unique_id=696731160]
+position = Vector2(601, 24.5)
+shape = SubResource("RectangleShape2D_m1504")
+
+[node name="ColorRect" type="ColorRect" parent="Roof" unique_id=18024550]
+offset_right = 1202.0
+offset_bottom = 49.0
+
+[node name="Platform1" type="StaticBody2D" parent="." unique_id=718126007]
+position = Vector2(1005, 457)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1" unique_id=124065413]
+position = Vector2(64, 7.25)
+shape = SubResource("RectangleShape2D_qy63d")
+
+[node name="ColorRect" type="ColorRect" parent="Platform1" unique_id=1713108757]
+offset_right = 127.0
+offset_bottom = 14.0
+
+[node name="Platform2" type="StaticBody2D" parent="." unique_id=775598219]
+position = Vector2(675, 345)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2" unique_id=501943454]
+position = Vector2(64, 7.25)
+shape = SubResource("RectangleShape2D_5k4jt")
+
+[node name="ColorRect" type="ColorRect" parent="Platform2" unique_id=1809921397]
+offset_right = 127.0
+offset_bottom = 14.0
+
+[node name="Platform3" type="StaticBody2D" parent="." unique_id=693087668]
+position = Vector2(324, 345)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3" unique_id=447843323]
+position = Vector2(64, 7.25)
+shape = SubResource("RectangleShape2D_6et1j")
+
+[node name="ColorRect" type="ColorRect" parent="Platform3" unique_id=672358158]
+offset_right = 127.0
+offset_bottom = 14.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Platform4" type="StaticBody2D" parent="." unique_id=22975329]
+position = Vector2(27, 236)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform4" unique_id=388493360]
+position = Vector2(64, 7.25)
+shape = SubResource("RectangleShape2D_ifaiv")
+
+[node name="ColorRect" type="ColorRect" parent="Platform4" unique_id=360399809]
+offset_right = 127.0
+offset_bottom = 14.0
+
+[node name="Wall1" type="StaticBody2D" parent="." unique_id=1525188313]
+position = Vector2(-22, 622)
+rotation = -1.5707964
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall1" unique_id=945527670]
+position = Vector2(286.5, 24.500025)
+shape = SubResource("RectangleShape2D_wdj6m")
+
+[node name="ColorRect" type="ColorRect" parent="Wall1" unique_id=927648990]
+offset_right = 621.7351
+offset_bottom = 49.0
+
+[node name="Wall2" type="StaticBody2D" parent="." unique_id=218511740]
+position = Vector2(1131, 622)
+rotation = -1.5707964
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2" unique_id=1714539455]
+position = Vector2(286.5, 24.5)
+shape = SubResource("RectangleShape2D_l8qe7")
+
+[node name="ColorRect" type="ColorRect" parent="Wall2" unique_id=2079618363]
+offset_right = 621.7351
+offset_bottom = 49.0
+
+[node name="ActBot" parent="." unique_id=1996347715 instance=ExtResource("1_2262g")]
+position = Vector2(306, 622)

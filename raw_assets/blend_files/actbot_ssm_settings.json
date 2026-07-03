@@ -1,0 +1,201 @@
+{
+    "rows": [
+        {
+            "enabled": true,
+            "label": "Idle",
+            "capture_item_index": 1,
+            "to_auto_capture": true,
+            "camera_direction": "-x",
+            "camera_orbit_z": 0.0,
+            "camera_orbit_x": 0.0,
+            "camera_roll": 0.0,
+            "h_center_bone": "",
+            "v_center_bone": "",
+            "consider_armature_bones": false,
+            "pixels_per_meter": 100.0,
+            "camera_padding_h": 0.0,
+            "camera_padding_v": 0.0,
+            "to_pixelate": true,
+            "pixelation_amount": 0.6000000238418579,
+            "color_amount": 50.0,
+            "min_alpha": 0.0,
+            "alpha_step": 0.0,
+            "pixelate_image_path": "",
+            "to_flip_h": false,
+            "to_flip_v": false,
+            "manual_frames": false,
+            "frame_start": 0,
+            "frame_end": 250,
+            "h_center_object": "",
+            "custom_camera": "",
+            "v_center_object": "",
+            "capture_items": [
+                {
+                    "object": "DummyMesh",
+                    "action": "",
+                    "slot": ""
+                },
+                {
+                    "object": "DummyArmature",
+                    "action": "Idle",
+                    "slot": ""
+                }
+            ]
+        },
+        {
+            "enabled": true,
+            "label": "Walk",
+            "capture_item_index": 1,
+            "to_auto_capture": true,
+            "camera_direction": "-x",
+            "camera_orbit_z": 0.0,
+            "camera_orbit_x": 0.0,
+            "camera_roll": 0.0,
+            "h_center_bone": "mixamorigHips",
+            "v_center_bone": "mixamorigHips",
+            "consider_armature_bones": false,
+            "pixels_per_meter": 100.0,
+            "camera_padding_h": 0.0,
+            "camera_padding_v": 0.0,
+            "to_pixelate": true,
+            "pixelation_amount": 0.6000000238418579,
+            "color_amount": 50.0,
+            "min_alpha": 0.0,
+            "alpha_step": 0.0,
+            "pixelate_image_path": "",
+            "to_flip_h": false,
+            "to_flip_v": false,
+            "manual_frames": false,
+            "frame_start": 0,
+            "frame_end": 250,
+            "h_center_object": "DummyArmature",
+            "custom_camera": "",
+            "v_center_object": "DummyArmature",
+            "capture_items": [
+                {
+                    "object": "DummyMesh",
+                    "action": "",
+                    "slot": ""
+                },
+                {
+                    "object": "DummyArmature",
+                    "action": "Walk",
+                    "slot": ""
+                }
+            ]
+        },
+        {
+            "enabled": true,
+            "label": "Run",
+            "capture_item_index": 1,
+            "to_auto_capture": true,
+            "camera_direction": "-x",
+            "camera_orbit_z": 0.0,
+            "camera_orbit_x": 0.0,
+            "camera_roll": 0.0,
+            "h_center_bone": "mixamorigHips",
+            "v_center_bone": "mixamorigHips",
+            "consider_armature_bones": false,
+            "pixels_per_meter": 100.0,
+            "camera_padding_h": 0.0,
+            "camera_padding_v": 0.0,
+            "to_pixelate": true,
+            "pixelation_amount": 0.6000000238418579,
+            "color_amount": 50.0,
+            "min_alpha": 0.0,
+            "alpha_step": 0.0,
+            "pixelate_image_path": "",
+            "to_flip_h": false,
+            "to_flip_v": false,
+            "manual_frames": false,
+            "frame_start": 0,
+            "frame_end": 250,
+            "h_center_object": "DummyArmature",
+            "custom_camera": "",
+            "v_center_object": "DummyArmature",
+            "capture_items": [
+                {
+                    "object": "DummyMesh",
+                    "action": "",
+                    "slot": ""
+                },
+                {
+                    "object": "DummyArmature",
+                    "action": "Run",
+                    "slot": ""
+                }
+            ]
+        },
+        {
+            "enabled": true,
+            "label": "Ninja Jump",
+            "capture_item_index": 1,
+            "to_auto_capture": true,
+            "camera_direction": "-x",
+            "camera_orbit_z": 0.0,
+            "camera_orbit_x": 0.0,
+            "camera_roll": 0.0,
+            "h_center_bone": "",
+            "v_center_bone": "",
+            "consider_armature_bones": false,
+            "pixels_per_meter": 100.0,
+            "camera_padding_h": 0.0,
+            "camera_padding_v": 0.0,
+            "to_pixelate": true,
+            "pixelation_amount": 0.6000000238418579,
+            "color_amount": 50.0,
+            "min_alpha": 0.0,
+            "alpha_step": 0.0,
+            "pixelate_image_path": "",
+            "to_flip_h": false,
+            "to_flip_v": false,
+            "manual_frames": false,
+            "frame_start": 0,
+            "frame_end": 250,
+            "h_center_object": "",
+            "custom_camera": "",
+            "v_center_object": "",
+            "capture_items": [
+                {
+                    "object": "DummyMesh",
+                    "action": "",
+                    "slot": ""
+                },
+                {
+                    "object": "DummyArmature",
+                    "action": "Ninja Jump",
+                    "slot": ""
+                }
+            ]
+        }
+    ],
+    "props": {
+        "label_font_size": 24,
+        "label_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "background_color": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "surrounding_margin_top": 0,
+        "surrounding_margin_right": 0,
+        "surrounding_margin_bottom": 0,
+        "surrounding_margin_left": 0,
+        "label_margin": 15,
+        "image_margin": 1,
+        "sprite_consistency": "Row Consistent",
+        "sprite_align": "Bottom Center",
+        "combine_mode": "Sheet",
+        "delete_temp_folder": true,
+        "temp_folder": "",
+        "output_folder": "/home/mrm/Desktop/",
+        "show_row_info": true,
+        "show_output_settings": false
+    }
+}
