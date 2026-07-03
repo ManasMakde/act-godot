@@ -24,7 +24,7 @@ func set_enabled(new_enabled:bool):
 	enable_changed.emit(self, _is_enabled)
 func abort_all():
 
-	for act in _all_acts:
+	for act: Act in _all_acts:
 		act.abort()
 func are_any_ongoing() -> bool:
 	return _ongoing_acts.size() != 0
@@ -210,7 +210,7 @@ func _defer_acts(flag: Act.TickFlags):
 
 
 	# Filter out
-	for act in filter:
+	for act: Act in filter:
 		acts_to_defer.erase(act)
 	
 

@@ -438,6 +438,7 @@ func _enter_impl():
 
 	# Block acts
 	_block_others()
+	if (_status != Status.ENTERING): return # Guard
 
 
 	# Broadcast pre-enter
