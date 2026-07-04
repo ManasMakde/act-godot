@@ -95,25 +95,11 @@ func deinit():
 	_theater._all_acts.erase(self)
 	_theater = null
 func perform():
-
-	# Return if cannot perform
-	if(!_can_perform_impl()):
-		return
-
-
-	# Store tick 
-	_performed_on_tick = Engine.get_process_frames()
-	_performed_on_physics_tick = Engine.get_physics_frames()
-
-
-	# Finish any ongoing perform
-	_finish(Outcome.INTERRUPTED)
-
-
-	# Redirect to prologue
-	_redirect(Status.PROLOGUING)
+	if(_can_perform_impl()):
+		_perform_impl()
 func perform_deferred(tick_flag := TickFlags.PHYSICS_TICK):
-	_theater._stage_deferred(self, tick_flag)
+	if(_theater):
+		_theater._stage_deferred(self, tick_flag)
 func retry():
 	_finish(Outcome.RETRY)
 func abort():
@@ -124,7 +110,7 @@ func add_to_block(acts: Array[Act], block_type := BlockType.PERSISTENT):
 
 		# Skip if self (reserved for enable/disable)
 		if(b_act == self):
-			push_warning(self, " Trying to block self!")
+			push_warning(_name, " Trying to block self!")
 			continue
 		
 
@@ -140,11 +126,6 @@ func set_enabled(new_enabled:bool):
 	# Set value
 	_is_enabled = new_enabled
 
-
-	# Finish interrupted if disabled
-	if(!_is_enabled):
-		_finish(Outcome.INTERRUPTED)
-	
 
 	# Block/Unblock self
 	if(!_is_enabled):
@@ -178,6 +159,11 @@ func is_ongoing() -> bool:
 func is_enabled() -> bool:
 	return _is_enabled
 func is_blocked() -> bool:
+
+	# Incase act is disabled
+	if(_blocked_by_acts.size() == 1 && _blocked_by_acts.has(self)):
+		return false
+
 	return _blocked_by_acts.size() != 0
 func did_enter() -> bool:
 	return _did_enter
@@ -252,8 +238,8 @@ func _block_self(by_act: Act, block_type: BlockType):
 		return
 	
 
-	# Abort act incase ongoing
-	abort()
+	# Finish interrupted incase ongoing
+	_finish(Outcome.INTERRUPTED)
 
 
 	# Add to blocked by list if persistent
@@ -311,9 +297,22 @@ static func _link_prologue_arrays(array_b: Array, array_a: Array):
 			_assign_prologue(act_b, act_a)
 static func _has_mutual_top_epilogue(act_a: Act, act_b: Act) -> bool:
 
+	# Incase both are the same acts
 	if(act_a == act_b):
 		return false
 	
+
+	# Incase act_a is a top epilogue
+	if(act_a._epilogue_acts.size() == 0 && act_b._top_epilogue_acts.has(act_a)):
+		return true
+	
+
+	# Incase act_b is a top epilogue
+	if(act_b._epilogue_acts.size() == 0 && act_a._top_epilogue_acts.has(act_b)):
+		return true
+
+
+	# Check for overlap in top epilogue of both
 	for e_act: Act in act_a._top_epilogue_acts:
 		if(act_b._top_epilogue_acts.has(e_act)):  
 			return true
@@ -355,6 +354,12 @@ static func _assign_prologue(e_act: Act, p_act: Act):
 		p_act._top_epilogue_acts.merge(e_act._top_epilogue_acts.duplicate())
 func _can_perform_impl() -> bool:
 
+	# Return if null theater
+	if(_theater == null):
+		push_warning(_name, "Null theater found, Initialize first!")
+		return false
+
+
 	# Return conditions
 	if(!_is_enabled || !_theater._is_enabled || is_blocked() || (!_can_reperform && is_ongoing())):
 		return false
@@ -367,6 +372,19 @@ func _can_perform_impl() -> bool:
 
 
 	return _can_perform()
+func _perform_impl():
+
+	# Store tick 
+	_performed_on_tick = Engine.get_process_frames()
+	_performed_on_physics_tick = Engine.get_physics_frames()
+
+
+	# Finish any ongoing perform
+	_finish(Outcome.INTERRUPTED)
+
+
+	# Redirect to prologue
+	_redirect(Status.PROLOGUING)
 func _prologue_impl():
 
 	# Let theater know this is act is now ongoing
@@ -381,20 +399,18 @@ func _prologue_impl():
 		if(p_act == self):
 			continue
 		
-
 		# Fail incase null
 		if(p_act == null):
 			return _redirect(Status.EXITING, Outcome.FAILURE)
-
 
 		# Assign prologue, epilogue & top epilogue
 		_assign_prologue(self, p_act)
 
 
-		# Fail incase cannot perform
-		if(!p_act.is_ongoing() && !p_act._can_perform_impl()):
-			return _redirect(Status.EXITING, Outcome.FAILURE)  # Intentionally after assigning, otherwise clear chain does not work DO NOT CHANGE
-	
+	# Block
+	_block_others()
+	if (_status != Status.PROLOGUING): return # Guard
+
 
 	# Skip if no prologues
 	if (_prologue_acts.size() == 0):
@@ -406,11 +422,19 @@ func _prologue_impl():
 	if (_status != Status.PROLOGUING): return # Guard
 
 
-	# Perform all
+	# Perform all prologues
 	for p_act: Act in _prologue_acts:
-		if(!p_act.is_ongoing()):
-			p_act.perform()
+
+		# Skip if ongoing
+		if(p_act.is_ongoing()):
+			continue
 		
+		# Fail incase cannot perform
+		if(!p_act._can_perform_impl()):
+			return _redirect(Status.EXITING, Outcome.FAILURE)
+		
+		# Perform
+		p_act._perform_impl()
 		if (_status != Status.PROLOGUING): return # Guard
 func _continue_prologue(p_act: Act, new_outcome:= Outcome.NONE):
 	
@@ -435,11 +459,6 @@ func _continue_prologue(p_act: Act, new_outcome:= Outcome.NONE):
 	# If prologue succeeded goto enter otherwise exit
 	_redirect(Status.ENTERING if prologue_succeeded else Status.EXITING, new_outcome)
 func _enter_impl():
-
-	# Block acts
-	_block_others()
-	if (_status != Status.ENTERING): return # Guard
-
 
 	# Broadcast pre-enter
 	pre_enter.emit(self)
@@ -507,7 +526,7 @@ func _physics_tick_impl():
 		return
 
 	
-	# Broadcast pre-tick
+	# Broadcast pre-physics-tick
 	pre_physics_tick.emit(self)
 	if (_status != Status.TICKING): return # Guard
 
@@ -517,7 +536,7 @@ func _physics_tick_impl():
 	if (_status != Status.TICKING): return # Guard
 
 
-	# Broadcast post-tick
+	# Broadcast post-physics-tick
 	post_physics_tick.emit(self)
 	if (_status != Status.TICKING): return # Guard
 
@@ -577,17 +596,18 @@ func _exit_impl():
 	_prologue_complete_count = 0
 
 
-	# Unblock acts
+	# Unblock
 	_unblock_others()
-
-
-	# Let theater know this is act has ended
-	_theater._unstage_ongoing(self)
 
 
 	# Retry performance
 	if(to_retry):
 		perform()
+		return
+
+
+	# Let theater know this is act has ended
+	_theater._unstage_ongoing(self)
 func _redirect(new_status: Status, new_outcome := Outcome.NONE):
 
 	# None -> Prologue
