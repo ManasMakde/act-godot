@@ -2,10 +2,10 @@ class_name Theater extends Node
 
 
 # Public Signals
-signal enable_changed(theater: Theater, new_is_enabled: bool)
-signal perform_start(theater: Theater, act: Act)
-signal perform_end(theater: Theater, act: Act)
-signal all_perform_end(theater: Theater)
+signal on_enable_changed(theater: Theater, new_is_enabled: bool)
+signal on_perform_start(theater: Theater, act: Act)
+signal on_perform_end(theater: Theater, act: Act)
+signal on_all_perform_end(theater: Theater)
 
 
 # Public Methods
@@ -21,7 +21,7 @@ func set_enabled(new_enabled:bool):
 	if(!_is_enabled):
 		abort_all()
 
-	enable_changed.emit(self, _is_enabled)
+	on_enable_changed.emit(self, _is_enabled)
 func abort_all():
 
 	for act: Act in _all_acts:
@@ -106,7 +106,7 @@ func _stage_ongoing(act: Act):
 
 
 	# Broadcast act started
-	perform_start.emit(self, act)
+	on_perform_start.emit(self, act)
 func _unstage_ongoing(act: Act):
 
 	# Remove as ongoing act
@@ -114,12 +114,12 @@ func _unstage_ongoing(act: Act):
 
 
 	# Broadcast act ended
-	perform_end.emit(self, act)
+	on_perform_end.emit(self, act)
 
 
 	# Broadcast all ended if none ongoing
 	if(!are_any_ongoing()):
-		all_perform_end.emit(self)
+		on_all_perform_end.emit(self)
 
 
 # Private Tick Methods

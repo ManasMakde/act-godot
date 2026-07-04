@@ -28,22 +28,22 @@ enum BlockType {
 
 
 # Public
-signal pre_setup(act: Act)
-signal post_setup(act: Act)
-signal pre_prologue(act: Act)
-signal post_prologue(act: Act)
-signal pre_enter(act: Act)
-signal post_enter(act: Act)
-signal pre_tick(act: Act)
-signal post_tick(act: Act)
-signal pre_physics_tick(act: Act)
-signal post_physics_tick(act: Act)
-signal pre_exit(act: Act)
-signal post_exit(act: Act)
-signal pre_cleanup(act: Act)
-signal post_cleanup(act: Act)
-signal enable_changed(act: Act, new_is_enabled: bool)
-signal block_changed(act: Act, blocking_act: Act, block_type: BlockType, did_block: bool)
+signal on_pre_setup(act: Act)
+signal on_post_setup(act: Act)
+signal on_pre_prologue(act: Act)
+signal on_post_prologue(act: Act)
+signal on_pre_enter(act: Act)
+signal on_post_enter(act: Act)
+signal on_pre_tick(act: Act)
+signal on_post_tick(act: Act)
+signal on_pre_physics_tick(act: Act)
+signal on_post_physics_tick(act: Act)
+signal on_pre_exit(act: Act)
+signal on_post_exit(act: Act)
+signal on_pre_cleanup(act: Act)
+signal on_post_cleanup(act: Act)
+signal on_enable_changed(act: Act, new_is_enabled: bool)
+signal on_block_changed(act: Act, blocking_act: Act, block_type: BlockType, did_block: bool)
 
 var prologue: Callable = func(_act: Act) -> Array[Act]: return []  # List all acts to perform before this act, Return `[ null ]` for failure outcome
 var perform_conditions: Array[Callable] = []  # Externally extendable conditions for `_can_perform()`, Signature func(_act: Act) -> bool
@@ -65,7 +65,7 @@ func init(theater: Theater, name := "", initially_enabled := true):
 
 
 	# Broadcast pre-setup
-	pre_setup.emit(self)
+	on_pre_setup.emit(self)
 
 
 	# Core setup
@@ -73,7 +73,7 @@ func init(theater: Theater, name := "", initially_enabled := true):
 
 
 	# Broadcast post-setup
-	post_setup.emit(self)
+	on_post_setup.emit(self)
 func deinit():
 
 	# Make sure act is not ongoing
@@ -81,7 +81,7 @@ func deinit():
 
 
 	# Broadcast pre-cleanup
-	pre_cleanup.emit(self)
+	on_pre_cleanup.emit(self)
 
 
 	# Core cleanup
@@ -89,7 +89,7 @@ func deinit():
 
 
 	# Broadcast post-cleanup
-	post_cleanup.emit(self)
+	on_post_cleanup.emit(self)
 
 
 	# Unassign owning theater
@@ -132,7 +132,7 @@ func set_enabled(new_enabled:bool):
 	
 
 	# Broadcast enabled/disabled
-	enable_changed.emit(self, is_enabled())
+	on_enable_changed.emit(self, is_enabled())
 func did_perform(tick_flag := TickFlags.PHYSICS_TICK) -> bool:  # True if act was performed atleast once during current tick
 
 	# Return false if no flag provided
@@ -194,9 +194,7 @@ static func seq(p_arrays: Array[Array]) -> Array:  # ONLY USE INSIDE `prologue`
 
 	# Chain all prologues
 	for i in range(p_length - 1, 0, -1):
-		var array_b := p_arrays[i]
-		var array_a := p_arrays[i - 1]
-		_link_prologue_arrays(array_b, array_a)
+		_link_prologue_arrays(p_arrays[i], p_arrays[i - 1])
 
 	
 	return p_arrays[p_length - 1]  # Return last acts
@@ -224,7 +222,6 @@ func _finish(new_outcome := Outcome.SUCCESS):  # Call in _enter() if _exit() nee
 	if(_status == Status.PROLOGUING):
 		_continue_prologue(null, new_outcome)
 
-
 	# If currently entering or ticking
 	elif(_status == Status.ENTERING || _status == Status.TICKING):
 		_redirect(Status.EXITING, new_outcome)
@@ -246,7 +243,7 @@ func _block_self(by_act: Act, block_type: BlockType):
 
 	# Broadcast blocked
 	if(by_act != self):
-		block_changed.emit(self, by_act, block_type, true)
+		on_block_changed.emit(self, by_act, block_type, true)
 func _unblock_self(by_act: Act):
 
 	# Return if not currently blocked by act
@@ -260,7 +257,7 @@ func _unblock_self(by_act: Act):
 
 	# Broadcast unblocked
 	if(by_act != self):
-		block_changed.emit(self, by_act, BlockType.PERSISTENT, false)
+		on_block_changed.emit(self, by_act, BlockType.PERSISTENT, false)
 func _block_others():
 	for act: Act in _acts_to_block:
 		act._block_self(self, _acts_to_block[act])
@@ -357,7 +354,7 @@ func _can_perform_impl() -> bool:
 
 
 	# Return conditions
-	if(!is_enabled() || !_theater._is_enabled || is_blocked() || (!_can_reperform && is_ongoing())):
+	if(!is_enabled() || !_theater.is_enabled() || is_blocked() || (!_can_reperform && is_ongoing())):
 		return false
 	
 
@@ -414,7 +411,7 @@ func _prologue_impl():
 	
 
 	# Broadcast pre-prologue
-	pre_prologue.emit(self)
+	on_pre_prologue.emit(self)
 	if (_status != Status.PROLOGUING): return # Guard
 
 
@@ -448,7 +445,7 @@ func _continue_prologue(p_act: Act, new_outcome:= Outcome.NONE):
 
 	# Broadcast post-prologue
 	if(prologue_succeeded):
-		post_prologue.emit(self)
+		on_post_prologue.emit(self)
 	if (_status != Status.PROLOGUING): return # Guard
 
 
@@ -457,7 +454,7 @@ func _continue_prologue(p_act: Act, new_outcome:= Outcome.NONE):
 func _enter_impl():
 
 	# Broadcast pre-enter
-	pre_enter.emit(self)
+	on_pre_enter.emit(self)
 	if (_status != Status.ENTERING): return # Guard
 
 
@@ -467,7 +464,7 @@ func _enter_impl():
 
 
 	# Broadcast post-enter
-	post_enter.emit(self)
+	on_post_enter.emit(self)
 	if (_status != Status.ENTERING): return # Guard
 
 
@@ -498,7 +495,7 @@ func _tick_impl():
 	
 
 	# Broadcast pre-tick
-	pre_tick.emit(self)
+	on_pre_tick.emit(self)
 	if (_status != Status.TICKING): return # Guard
 
 
@@ -508,7 +505,7 @@ func _tick_impl():
 
 
 	# Broadcast post-tick
-	post_tick.emit(self)
+	on_post_tick.emit(self)
 	if (_status != Status.TICKING): return # Guard
 
 
@@ -523,7 +520,7 @@ func _physics_tick_impl():
 
 	
 	# Broadcast pre-physics-tick
-	pre_physics_tick.emit(self)
+	on_pre_physics_tick.emit(self)
 	if (_status != Status.TICKING): return # Guard
 
 
@@ -533,7 +530,7 @@ func _physics_tick_impl():
 
 
 	# Broadcast post-physics-tick
-	post_physics_tick.emit(self)
+	on_post_physics_tick.emit(self)
 	if (_status != Status.TICKING): return # Guard
 
 
@@ -555,7 +552,7 @@ func _exit_impl():
 
 
 	# Broadcast pre-exit
-	pre_exit.emit(self)
+	on_pre_exit.emit(self)
 	if (_status != Status.EXITING): return # Guard
 
 
@@ -565,7 +562,7 @@ func _exit_impl():
 
 
 	# Broadcast post-exit
-	post_exit.emit(self)
+	on_post_exit.emit(self)
 	if (_status != Status.EXITING): return # Guard
 
 
