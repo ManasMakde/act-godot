@@ -44,6 +44,8 @@ var _is_enabled := true
 
 
 # Private Staging Methods
+func _add_act(new_act: Act):
+	_all_acts[new_act] = true
 func _stage_deferred(act: Act, flag: Act.TickFlags):
 		
 	if(act == null):

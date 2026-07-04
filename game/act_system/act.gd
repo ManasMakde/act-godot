@@ -50,9 +50,15 @@ var perform_conditions: Array[Callable] = []  # Externally extendable conditions
 
 func init(theater: Theater, name := "", initially_enabled := true):
 
+	# Warn if null theater provided
+	if (theater == null):
+		push_warning(name, " Null theater provided for initialization!");
+		return;
+
+
 	# Assign new owning theater
 	_theater = theater
-	_theater._all_acts[self] = true
+	_theater._add_act(self)
 
 
 	# Assign new name
