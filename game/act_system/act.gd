@@ -99,7 +99,7 @@ func deinit():
 
 
 	# Unassign owning theater
-	_theater._all_acts.erase(self)
+	_theater._remove_act(self)
 	_theater = null
 func perform():
 	if(_can_perform_impl()):
