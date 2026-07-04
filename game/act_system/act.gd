@@ -154,7 +154,7 @@ func did_perform_ever() -> bool:  # True if act was performed atleast once since
 func is_ongoing() -> bool:
 	return _status != Status.NONE
 func is_enabled() -> bool:
-	return _blocked_by_acts.has(self)
+	return !_blocked_by_acts.has(self)
 func is_blocked() -> bool:
 
 	# Incase act is disabled
