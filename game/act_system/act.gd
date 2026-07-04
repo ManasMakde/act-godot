@@ -59,8 +59,9 @@ func init(theater: Theater, name := "", initially_enabled := true):
 	_name = name
 
 
-	# Assign is enabled initially
-	_is_enabled = initially_enabled
+	# Disable Initially
+	if(!initially_enabled):
+		_block_self(self, BlockType.PERSISTENT)
 
 
 	# Broadcast pre-setup
@@ -119,23 +120,19 @@ func add_to_block(acts: Array[Act], block_type := BlockType.PERSISTENT):
 func set_enabled(new_enabled:bool):
 
 	# Return if trying to reassign same value
-	if(new_enabled == _is_enabled):
+	if(new_enabled == is_enabled()):
 		return
 	
 
-	# Set value
-	_is_enabled = new_enabled
-
-
 	# Block/Unblock self
-	if(!_is_enabled):
+	if(!new_enabled):
 		_block_self(self, BlockType.PERSISTENT)
 	else:
 		_unblock_self(self)
 	
 
 	# Broadcast enabled/disabled
-	enable_changed.emit(self, _is_enabled)
+	enable_changed.emit(self, is_enabled())
 func did_perform(tick_flag := TickFlags.PHYSICS_TICK) -> bool:  # True if act was performed atleast once during current tick
 
 	# Return false if no flag provided
@@ -157,7 +154,7 @@ func did_perform_ever() -> bool:  # True if act was performed atleast once since
 func is_ongoing() -> bool:
 	return _status != Status.NONE
 func is_enabled() -> bool:
-	return _is_enabled
+	return _blocked_by_acts.has(self)
 func is_blocked() -> bool:
 
 	# Incase act is disabled
@@ -278,7 +275,6 @@ var _theater: Theater = null  # Which theater this act belongs to
 var _status := Status.NONE  # Keeps track of where in the perform life cycle the act is currently 
 var _outcome := Outcome.NONE  # Denotes how the act ended
 var _did_enter := false  # true if exit has been reached via enter 
-var _is_enabled := true
 var _name := ""  # Useful for debugging
 var _acts_to_block: Dictionary[Act, BlockType] = {}  # Which acts to block when performing this act 
 var _blocked_by_acts: Dictionary[Act, bool] = {}  # Which acts are blocking this act (Treat as HashSet)
@@ -361,7 +357,7 @@ func _can_perform_impl() -> bool:
 
 
 	# Return conditions
-	if(!_is_enabled || !_theater._is_enabled || is_blocked() || (!_can_reperform && is_ongoing())):
+	if(!is_enabled() || !_theater._is_enabled || is_blocked() || (!_can_reperform && is_ongoing())):
 		return false
 	
 
