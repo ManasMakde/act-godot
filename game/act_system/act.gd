@@ -17,7 +17,7 @@ enum Status {
 enum Outcome {
 	INTERRUPTED = -2,
 	FAILURE = -1,
-	NONE = 0,  # Intentionally kept none=0 & success=1 for easier bool comparison DO NOT CHANGE
+	PENDING = 0,  # Intentionally kept none=0 & success=1 for easier bool comparison DO NOT CHANGE
 	SUCCESS = 1,
 	RETRY = 2
 }
@@ -215,11 +215,11 @@ func _setup(): pass
 func _can_perform() -> bool:
 	return true
 func _enter() -> Outcome:
-	return Outcome.NONE if _tick_flags != TickFlags.NONE else Outcome.SUCCESS
+	return Outcome.PENDING if _tick_flags != TickFlags.NONE else Outcome.SUCCESS
 func _tick() -> Outcome:
-	return Outcome.NONE
+	return Outcome.PENDING
 func _physics_tick() -> Outcome:
-	return Outcome.NONE
+	return Outcome.PENDING
 func _exit(): pass
 func _cleanup(): pass
 func _finish(new_outcome := Outcome.SUCCESS):  # Call in _enter() if _exit() needs to be delayed
@@ -276,7 +276,7 @@ func _unblock_others():
 # Private
 var _theater: Theater = null  # Which theater this act belongs to
 var _status := Status.NONE  # Keeps track of where in the perform life cycle the act is currently 
-var _outcome := Outcome.NONE  # Denotes how the act ended
+var _outcome := Outcome.PENDING  # Denotes how the act ended
 var _did_enter := false  # true if exit has been reached via enter 
 var _name := ""  # Useful for debugging
 var _acts_to_block: Dictionary[Act, BlockType] = {}  # Which acts to block when performing this act 
@@ -435,7 +435,7 @@ func _prologue_impl():
 		# Perform
 		p_act._perform_impl()
 		if (_status != Status.PROLOGUING): return # Guard
-func _continue_prologue(p_act: Act, new_outcome:= Outcome.NONE):
+func _continue_prologue(p_act: Act, new_outcome:= Outcome.PENDING):
 	
 	# Guard
 	if(_status != Status.PROLOGUING):
@@ -475,7 +475,7 @@ func _enter_impl():
 
 
 	# Redirect to exit
-	if(new_outcome != Outcome.NONE):
+	if(new_outcome != Outcome.PENDING):
 		return _redirect(Status.EXITING, new_outcome)
 
 
@@ -516,7 +516,7 @@ func _tick_impl():
 
 
 	# Check if exit was requested
-	if(new_outcome != Outcome.NONE):
+	if(new_outcome != Outcome.PENDING):
 		_redirect(Status.EXITING, new_outcome)
 func _physics_tick_impl():
 	
@@ -541,7 +541,7 @@ func _physics_tick_impl():
 
 
 	# Check if exit was requested
-	if(new_outcome != Outcome.NONE):
+	if(new_outcome != Outcome.PENDING):
 		_redirect(Status.EXITING, new_outcome)
 func _exit_impl():
 
@@ -590,7 +590,7 @@ func _exit_impl():
 	# Reset properties
 	var to_retry := _outcome == Outcome.RETRY
 	_status = Status.NONE
-	_outcome = Outcome.NONE
+	_outcome = Outcome.PENDING
 	_did_enter = false
 	_prologue_complete_count = 0
 
@@ -607,7 +607,7 @@ func _exit_impl():
 
 	# Let theater know this is act has ended
 	_theater._unstage_ongoing(self)
-func _redirect(new_status: Status, new_outcome := Outcome.NONE):
+func _redirect(new_status: Status, new_outcome := Outcome.PENDING):
 
 	# None -> Prologue
 	if(_status == Status.NONE && new_status == Status.PROLOGUING):
