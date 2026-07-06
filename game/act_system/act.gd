@@ -101,6 +101,11 @@ func deinit():
 	# Unassign owning theater
 	_theater._remove_act(self)
 	_theater = null
+
+
+	# Reset performed on ticks
+	_performed_on_tick = -1
+	_performed_on_physics_tick = -1
 func perform():
 	if(_can_perform_impl()):
 		_perform_impl()
