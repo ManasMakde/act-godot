@@ -618,9 +618,9 @@ func _exit_impl():
 	_unblock_others()
 
 
-	# Retry performance
-	if(to_retry):
-		perform()
+	# Retry perform
+	if(to_retry && _can_perform_impl()):
+		_perform_impl()
 		return
 
 
