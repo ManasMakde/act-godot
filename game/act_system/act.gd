@@ -108,7 +108,10 @@ func perform_deferred(tick_flag := TickFlags.PHYSICS_TICK):
 	if(_theater):
 		_theater._stage_deferred(self, tick_flag)
 func retry():
-	_finish(Outcome.RETRY)
+	if(is_ongoing()):
+		_finish(Outcome.RETRY)
+	else:
+		perform()
 func abort():
 	_finish(Outcome.INTERRUPTED)
 func add_to_block(acts: Array[Act], block_type := BlockType.PERSISTENT):
@@ -134,7 +137,6 @@ func remove_from_block(acts: Array[Act]):
 
 		# Remove from block list
 		_acts_to_block.erase(b_act)
-
 func set_enabled(new_enabled:bool):
 
 	# Return if trying to reassign same value
