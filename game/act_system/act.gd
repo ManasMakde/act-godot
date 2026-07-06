@@ -123,6 +123,18 @@ func add_to_block(acts: Array[Act], block_type := BlockType.PERSISTENT):
 
 		# Add to block list
 		_acts_to_block[b_act] = block_type
+func remove_from_block(acts: Array[Act]):
+
+	for b_act: Act in acts:
+
+		# Skip if self (reserved for enable/disable)
+		if(b_act == self):
+			continue
+		
+
+		# Remove from block list
+		_acts_to_block.erase(b_act)
+
 func set_enabled(new_enabled:bool):
 
 	# Return if trying to reassign same value
