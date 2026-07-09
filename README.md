@@ -2,10 +2,12 @@
 This is the godot implementation of the **Act Pattern**  
 For a complete explaination & implementation in other game engines visit the [main repository](https://github.com/ManasMakde/act)
 
-> **Note**:  
-> If you want to use the Act Pattern just copy paste these files anywhere into your project:  
-> 1. [`game/act_system/act.gd`](game/act_system/act.gd)  
-> 1. [`game/act_system/theater.gd`](game/act_system/theater.gd)  
+> ℹ️ **Note**:  
+> If you want to use the Act Pattern in your project just copy paste these files:  
+> 1. [`act.gd`](game/act_system/act.gd)  
+> 1. [`theater.gd`](game/act_system/theater.gd)  
+>
+> _Also feel free to leave a ⭐ if you use them in your project!_  
 
 
 

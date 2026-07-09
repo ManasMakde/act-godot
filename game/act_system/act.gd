@@ -211,6 +211,10 @@ func get_name() -> String:
 	return _name
 static func seq(p_arrays: Array[Array]) -> Array:  # ONLY USE INSIDE `prologue`
 
+	# Remove empty lists before chaining
+	p_arrays = p_arrays.filter(func(p_arr): return p_arr.size() > 0)
+
+	
 	# Return if empty list
 	var p_length := p_arrays.size() 
 	if(p_length == 0):
@@ -293,11 +297,11 @@ func _unblock_others():
 
 
 # Private
+var _name := ""  # Useful for debugging
 var _theater: Theater = null  # Which theater this act belongs to
 var _status := Status.NONE  # Keeps track of where in the perform life cycle the act is currently 
 var _outcome := Outcome.PENDING  # Denotes how the act ended
 var _did_enter := false  # true if exit has been reached via enter 
-var _name := ""  # Useful for debugging
 var _acts_to_block: Dictionary[Act, BlockType] = {}  # Which acts to block when performing this act 
 var _blocked_by_acts: Dictionary[Act, bool] = {}  # Which acts are blocking this act (Treat as HashSet)
 var _top_epilogue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
@@ -395,6 +399,10 @@ func _perform_impl():
 	# Store tick 
 	_performed_on_tick = Engine.get_process_frames()
 	_performed_on_physics_tick = Engine.get_physics_frames()
+
+
+	# Mark outcome as pending
+	_outcome = Outcome.PENDING
 
 
 	# Finish any ongoing perform
@@ -609,7 +617,6 @@ func _exit_impl():
 	# Reset properties
 	var to_retry := _outcome == Outcome.RETRY
 	_status = Status.NONE
-	_outcome = Outcome.PENDING
 	_did_enter = false
 	_prologue_complete_count = 0
 
