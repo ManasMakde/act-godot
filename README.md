@@ -4,8 +4,8 @@ For a complete explaination & implementation in other game engines visit the [ma
 
 > ℹ️ **Note**:  
 > If you want to use the Act Pattern in your project just copy paste these files:  
-> 1. [`act.gd`](game/act_system/act.gd)  
-> 1. [`theater.gd`](game/act_system/theater.gd)  
+> 1. [`act.gd`](demo/act_pattern/act.gd)  
+> 1. [`theater.gd`](demo/act_pattern/theater.gd)  
 >
 > _Also feel free to leave a ⭐ if you use them in your project!_  
 
