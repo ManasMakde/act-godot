@@ -45,8 +45,8 @@ signal on_post_cleanup(act: Act)
 signal on_enable_changed(act: Act, new_is_enabled: bool)
 signal on_block_changed(act: Act, blocking_act: Act, block_type: BlockType, did_block: bool)
 
-var prologue: Callable = func(_act: Act) -> Array[Act]: return []  # List all acts to perform before this act, Return `[ null ]` for failure outcome
-var perform_conditions: Array[Callable] = []  # Externally extendable conditions for `_can_perform()`, Signature func(_act: Act) -> bool
+var prologue: Callable = func(_act: Act) -> Array[Act]: return []  # List all acts to perform before this act, Return [ null ] for failure outcome
+var perform_conditions: Array[Callable] = []  # Externally extendable conditions for _can_perform(), Signature func(_act: Act) -> bool
 
 func init(theater: Theater, name := "", initially_enabled := true):
 
@@ -209,7 +209,7 @@ func get_physics_delta() -> float:
 	return _theater.get_physics_process_delta_time()
 func get_name() -> String:
 	return _name
-static func seq(p_arrays: Array[Array]) -> Array:  # ONLY USE INSIDE `prologue`
+static func seq(p_arrays: Array[Array]) -> Array:  # Only use inside prologue
 
 	# Remove empty lists before chaining
 	p_arrays = p_arrays.filter(func(p_arr): return p_arr.size() > 0)
@@ -231,8 +231,8 @@ static func seq(p_arrays: Array[Array]) -> Array:  # ONLY USE INSIDE `prologue`
 
 
 # Protected
-var _can_reperform := false  # Indicates if act can interrupt itself & restart perform (Assign in `_setup()`)
-var _tick_flags := TickFlags.NONE  # Indicates if act will be "Ticking" after entering (Assign in `_setup()`)
+var _can_reperform := false  # Indicates if act can interrupt itself & restart perform, Only assign in _setup()
+var _tick_flags := TickFlags.NONE  # Indicates if act will be "Ticking" after entering, Only assign in _setup()
 
 func _setup(): pass
 func _can_perform() -> bool:
