@@ -435,7 +435,7 @@ func _prologue_impl():
 	if (_status != Status.PROLOGUING): return # Guard
 
 
-	# Iterate all prologues
+	# Assign all prologues & epilogues
 	for p_act: Act in prologue.call(self):
 
 		# Skip self
