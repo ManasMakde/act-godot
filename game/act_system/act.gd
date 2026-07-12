@@ -256,8 +256,8 @@ func _finish(new_outcome := Outcome.SUCCESS):  # Call in _enter() if _exit() nee
 		_redirect(Status.EXITING, new_outcome)
 func _block_self(by_act: Act, block_type: BlockType):
 
-	# Return if already blocked or top epilogues match up
-	if(_blocked_by_acts.has(by_act) or _has_mutual_top_epilogue(self, by_act)):
+	# Return if already blocked or if both are in the same prologue chain
+	if(_blocked_by_acts.has(by_act) or _in_same_prologue_chain(self, by_act)):
 		return
 	
 
@@ -316,8 +316,8 @@ static func _link_prologue_arrays(array_b: Array, array_a: Array):
 		var act_b: Act = array_b[i]
 		for j in range(array_a.size()):
 			var act_a: Act = array_a[j]
-			_assign_prologue(act_b, act_a)
-static func _has_mutual_top_epilogue(act_a: Act, act_b: Act) -> bool:
+			_assign_prologue_epilogue(act_b, act_a)
+static func _in_same_prologue_chain(act_a: Act, act_b: Act) -> bool:
 
 	# Incase both are the same acts
 	if(act_a == act_b):
@@ -359,7 +359,7 @@ static func _clear_prologue_chain(of_act: Act):
 	of_act._epilogue_acts.clear()
 	of_act._top_epilogue_acts.clear()
 	of_act._prologue_acts.clear()
-static func _assign_prologue(e_act: Act, p_act: Act):
+static func _assign_prologue_epilogue(e_act: Act, p_act: Act):
 
 	# Assign prologue
 	e_act._prologue_acts[p_act] = true
@@ -367,13 +367,30 @@ static func _assign_prologue(e_act: Act, p_act: Act):
 
 	# Assign epilogue
 	p_act._epilogue_acts[e_act] = true
+static func _assign_top_epilogues(e_act: Act, _top_epilogues: Dictionary[Act, bool] = {}):
+
+	# Get top epilogues to pass on
+	if(_top_epilogues.size() == 0):
+		if(e_act._epilogue_acts.size() == 0):
+			_top_epilogues[e_act] = true
+		else:
+			_top_epilogues = e_act._top_epilogue_acts.duplicate()
+	
+
+	# Recurse into prologues
+	for p_act: Act in e_act._prologue_acts:
+
+		# Skip null
+		if(p_act == null):
+			continue
+		
+
+		# Assign top epilogues
+		p_act._top_epilogue_acts.merge(_top_epilogues.duplicate())
 
 
-	# Assign top epilogue
-	if(e_act._epilogue_acts.size() == 0):
-		p_act._top_epilogue_acts[e_act] = true
-	else:
-		p_act._top_epilogue_acts.merge(e_act._top_epilogue_acts.duplicate())
+		# Recurse further down chain
+		_assign_top_epilogues(p_act, _top_epilogues)
 func _can_perform_impl() -> bool:
 
 	# Return if null theater
@@ -418,7 +435,7 @@ func _prologue_impl():
 	if (_status != Status.PROLOGUING): return # Guard
 
 
-	# Assign all prologues & epilogues
+	# Iterate all prologues
 	for p_act: Act in prologue.call(self):
 
 		# Skip self
@@ -429,8 +446,12 @@ func _prologue_impl():
 		if(p_act == null):
 			return _redirect(Status.EXITING, Outcome.FAILURE)
 
-		# Assign prologue, epilogue & top epilogue
-		_assign_prologue(self, p_act)
+		# Assign prologue & epilogue 
+		_assign_prologue_epilogue(self, p_act)
+	
+	
+	# Assign all top epilogues
+	_assign_top_epilogues(self)
 
 
 	# Block
@@ -655,3 +676,5 @@ func _redirect(new_status: Status, new_outcome := Outcome.PENDING):
 		_status = Status.EXITING
 		_outcome = new_outcome
 		_exit_impl()
+func _to_string() -> String:
+	return _name  # For easier debugging in editor
