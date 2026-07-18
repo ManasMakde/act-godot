@@ -115,11 +115,11 @@ func perform_deferred(tick_flag := TickFlags.PHYSICS_TICK):
 		_theater._stage_deferred(self, tick_flag)
 func retry():
 	if(is_ongoing()):
-		_finish(Outcome.RETRY)
+		_redirect(Status.EXITING, Outcome.RETRY)
 	else:
 		perform()
 func abort():
-	_finish(Outcome.INTERRUPTED)
+	_redirect(Status.EXITING, Outcome.INTERRUPTED)
 func add_to_block(acts: Array[Act], block_type := BlockType.PERSISTENT):
 
 	for b_act: Act in acts:
@@ -246,15 +246,8 @@ func _physics_tick() -> Outcome:
 	return Outcome.PENDING
 func _exit(): pass
 func _cleanup(): pass
-func _finish(new_outcome := Outcome.SUCCESS):  # Call in _enter() if _exit() needs to be delayed
-
-	# If currently prologuing
-	if(_status == Status.PROLOGUING):
-		_continue_prologue(null, new_outcome)
-
-	# If currently entering or ticking
-	elif(_status == Status.ENTERING || _status == Status.TICKING):
-		_redirect(Status.EXITING, new_outcome)
+func _finish(new_outcome := Outcome.SUCCESS):
+	_redirect(Status.EXITING, new_outcome)
 func _block_self(by_act: Act, block_type: BlockType):
 
 	# Return if already blocked or if both are in the same prologue chain
@@ -263,7 +256,7 @@ func _block_self(by_act: Act, block_type: BlockType):
 	
 
 	# Finish interrupted incase ongoing
-	_finish(Outcome.INTERRUPTED)
+	_redirect(Status.EXITING, Outcome.INTERRUPTED)
 
 
 	# Add to blocked by list if persistent
@@ -428,15 +421,6 @@ func _can_perform_impl() -> bool:
 	return _can_perform()
 func _perform_impl():
 
-	# Store tick 
-	_performed_on_tick = Engine.get_process_frames()
-	_performed_on_physics_tick = Engine.get_physics_frames()
-
-
-	# Mark outcome as pending
-	_outcome = Outcome.PENDING
-
-
 	# Finish any ongoing perform
 	_finish(Outcome.INTERRUPTED)
 
@@ -445,7 +429,7 @@ func _perform_impl():
 	_redirect(Status.PROLOGUING)
 func _prologue_impl():
 
-	# Let theater know this is act is now ongoing
+	# Let theater know this act is now ongoing
 	_theater._stage_ongoing(self)
 	if (_status != Status.PROLOGUING): return # Guard
 
@@ -501,8 +485,7 @@ func _prologue_impl():
 func _continue_prologue(p_act: Act, new_outcome:= Outcome.PENDING):
 	
 	# Guard
-	if(_status != Status.PROLOGUING):
-		return
+	if(_status != Status.PROLOGUING): return
 	
 
 	# Wait for all prologues to complete
@@ -545,13 +528,8 @@ func _enter_impl():
 	# Start ticking
 	if(can_tick(TickFlags.TICK)):
 		_theater._stage_tick(self)
-	if (_status != Status.ENTERING): return # Guard
-
-
-	# Start physics ticking
 	if(can_tick(TickFlags.PHYSICS_TICK)):
 		_theater._stage_physics_tick(self)
-	if (_status != Status.ENTERING): return # Guard
 
 
 	# Redirect to ticking	
@@ -559,8 +537,7 @@ func _enter_impl():
 func _tick_impl():
 
 	# Guard
-	if(_status != Status.TICKING): 
-		return
+	if(_status != Status.TICKING): return
 	
 
 	# Broadcast pre-tick
@@ -611,13 +588,8 @@ func _exit_impl():
 	# Stop ticking
 	if(can_tick(TickFlags.TICK)):
 		_theater._unstage_tick(self)
-	if (_status != Status.EXITING): return # Guard
-
-
-	# Stop physics ticking
 	if(can_tick(TickFlags.PHYSICS_TICK)):
 		_theater._unstage_physics_tick(self)
-	if (_status != Status.EXITING): return # Guard
 
 
 	# Broadcast pre-exit
@@ -650,15 +622,15 @@ func _exit_impl():
 	_clear_prologue_chain(self)
 
 
+	# Unblock
+	_unblock_others()
+
+
 	# Reset properties
 	var to_retry := _outcome == Outcome.RETRY
 	_status = Status.NONE
 	_did_enter = false
 	_prologue_complete_count = 0
-
-
-	# Unblock
-	_unblock_others()
 
 
 	# Retry perform
@@ -674,6 +646,9 @@ func _redirect(new_status: Status, new_outcome := Outcome.PENDING):
 	# None -> Prologue
 	if(_status == Status.NONE && new_status == Status.PROLOGUING):
 		_status = Status.PROLOGUING
+		_outcome = Outcome.PENDING
+		_performed_on_tick = Engine.get_process_frames()
+		_performed_on_physics_tick = Engine.get_physics_frames()
 		_prologue_impl()
 
 	# Prologue -> Enter

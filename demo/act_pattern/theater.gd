@@ -23,7 +23,6 @@ func set_enabled(new_enabled:bool):
 
 	on_enable_changed.emit(self, _is_enabled)
 func abort_all():
-
 	for act: Act in _all_acts:
 		act.abort()
 func are_any_ongoing() -> bool:
@@ -48,6 +47,36 @@ func _add_act(new_act: Act):
 	_all_acts[new_act] = true
 func _remove_act(old_act: Act):
 	_all_acts.erase(old_act)
+func _stage_ongoing(act: Act):
+
+	# Return if invalid act or already ongoing
+	if(act == null || _ongoing_acts.has(act)):
+		return
+	
+
+	# Mark as ongoing act
+	_ongoing_acts[act] = true
+
+
+	# Clear defer
+	_unstage_deferred(act)
+
+
+	# Broadcast act started
+	on_perform_start.emit(self, act)
+func _unstage_ongoing(act: Act):
+
+	# Remove as ongoing act
+	_ongoing_acts.erase(act)
+
+
+	# Broadcast act ended
+	on_perform_end.emit(self, act)
+
+
+	# Broadcast all ended if none ongoing
+	if(!are_any_ongoing()):
+		on_all_perform_end.emit(self)
 func _stage_deferred(act: Act, flag: Act.TickFlags):
 		
 	if(act == null):
@@ -94,36 +123,6 @@ func _unstage_physics_tick(act: Act):
 		_staged_physics_tick_acts.erase(act)
 	elif(_acts_to_physics_tick.has(act)):
 		_staged_physics_tick_acts[act] = false
-func _stage_ongoing(act: Act):
-
-	# Return if invalid act or already ongoing
-	if(act == null || _ongoing_acts.has(act)):
-		return
-	
-
-	# Mark as ongoing act
-	_ongoing_acts[act] = true
-
-
-	# Clear defer
-	_unstage_deferred(act)
-
-
-	# Broadcast act started
-	on_perform_start.emit(self, act)
-func _unstage_ongoing(act: Act):
-
-	# Remove as ongoing act
-	_ongoing_acts.erase(act)
-
-
-	# Broadcast act ended
-	on_perform_end.emit(self, act)
-
-
-	# Broadcast all ended if none ongoing
-	if(!are_any_ongoing()):
-		on_all_perform_end.emit(self)
 
 
 # Private Tick Methods
@@ -144,11 +143,8 @@ func _tick_acts():
 		act._tick_impl()
 	
 
-	# Merge back
+	# Merge back & clear
 	_staged_tick_acts.merge(_acts_to_tick, false)
-
-
-	# Clear
 	_acts_to_tick.clear()
 
 
@@ -177,11 +173,8 @@ func _physics_tick_acts():
 		act._physics_tick_impl()
 	
 
-	# Merge back
+	# Merge back & clear
 	_staged_physics_tick_acts.merge(_acts_to_physics_tick, false)
-
-
-	# Clear
 	_acts_to_physics_tick.clear()
 
 
