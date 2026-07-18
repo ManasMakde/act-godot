@@ -271,7 +271,7 @@ func _block_self(by_act: Act, block_type: BlockType):
 
 	# Return if both acts are in the same prologue chain
 	if(_in_same_prologue_chain(self, by_act)):
-		_write_log("Failed to block, Both ", _name, " & ", by_act._name, " are in the same prologue chain!")
+		_write_log("Failed to block, Both " + _name + " & " + by_act._name + " are in the same prologue chain!")
 		return
 
 
