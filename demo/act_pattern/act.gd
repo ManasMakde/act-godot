@@ -17,7 +17,7 @@ enum Status {
 enum Outcome {
 	INTERRUPTED = -2,
 	FAILURE = -1,
-	PENDING = 0,  # Intentionally kept none=0 & success=1 for easier bool comparison DO NOT CHANGE
+	PENDING = 0,
 	SUCCESS = 1,
 	RETRY = 2
 }
@@ -55,8 +55,8 @@ func init(theater: Theater, name := "", initially_enabled := true):
 
 	# Warn if null theater provided
 	if (theater == null):
-		_write_log(" Null theater provided for initialization!", name);
-		return;
+		_write_log("Null theater provided for initialization!", name)
+		return
 
 
 	# Assign new owning theater
@@ -118,7 +118,7 @@ func perform_deferred(tick_flag := TickFlags.PHYSICS_TICK):
 	# Warn if null theater provided
 	if (_theater == null):
 		_write_log("Cannot perform deferred, Theater is null! Have you initialized act?")
-		return;
+		return
 	
 	_theater._stage_deferred(self, tick_flag)
 func retry():
@@ -218,6 +218,12 @@ func get_physics_delta() -> float:
 func get_name() -> String:
 	return _name
 static func seq(p_arrays: Array[Array]) -> Array:  # Only use inside prologue
+
+	# Check for any null
+	for p_array in p_arrays:
+		if p_array.has(null):
+			return [null]
+
 
 	# Remove empty lists before chaining
 	p_arrays = p_arrays.filter(func(p_arr): return p_arr.size() > 0)
@@ -379,18 +385,18 @@ static func _assign_prologue_chain(of_act: Act):
 		# Assign prologue & epilogue
 		of_act._prologue_acts[p_act] = true
 		p_act._epilogue_acts[of_act] = true
-static func _assign_top_epilogues(e_act: Act, _top_epilogues: Dictionary[Act, bool] = {}):
+static func _assign_top_epilogues(of_act: Act, _top_epilogues: Dictionary[Act, bool] = {}):
 
 	# Get top epilogues to pass on
 	if(_top_epilogues.size() == 0):
-		if(e_act._epilogue_acts.size() == 0):
-			_top_epilogues[e_act] = true
+		if(of_act._epilogue_acts.size() == 0):
+			_top_epilogues[of_act] = true
 		else:
-			_top_epilogues = e_act._top_epilogue_acts.duplicate()
+			_top_epilogues = of_act._top_epilogue_acts
 	
 
 	# Recurse into prologues
-	for p_act: Act in e_act._prologue_acts:
+	for p_act: Act in of_act._prologue_acts:
 
 		# Skip null
 		if(p_act == null):
@@ -403,29 +409,93 @@ static func _assign_top_epilogues(e_act: Act, _top_epilogues: Dictionary[Act, bo
 
 		# Recurse further down chain
 		_assign_top_epilogues(p_act, _top_epilogues)
+static func _clear_prologue_chain(of_act: Act, to_skip_epilogues := false):
+	
+	# Clear self from prologues
+	for p_act: Act in of_act._prologue_acts:
+
+		# Skip if null
+		if(p_act == null):
+			continue
+		
+		# Remove self from epilogue
+		p_act._epilogue_acts.erase(of_act)
+		
+		# Recurse down, Incase seq() linked acts that were never performed
+		if(p_act._epilogue_acts.size() == 0):  
+			_clear_prologue_chain(p_act)
+
+
+	# Clear prologues 
+	of_act._prologue_acts.clear()
+
+
+	# Do not continue on with clearing epilogues
+	if(to_skip_epilogues):
+		return
+
+
+	# Clear self from epilogues
+	for e_act: Act in of_act._epilogue_acts:
+		if(e_act != null):
+			e_act._prologue_acts.erase(of_act)
+
+
+	# Clear epilogues
+	of_act._epilogue_acts.clear()
+static func _clear_top_epilogues(of_act: Act, _top_epilogues: Dictionary[Act, bool] = {}):
+
+	# Get top epilogues to remove
+	if(_top_epilogues.size() == 0):
+		if(of_act._epilogue_acts.size() == 0):
+			_top_epilogues[of_act] = true
+		else:
+			_top_epilogues = of_act._top_epilogue_acts
+	
+
+	# Recurse into prologues
+	for p_act: Act in of_act._prologue_acts:
+
+		# Skip null
+		if(p_act == null):
+			continue
+		
+
+		# Remove top epilogues
+		for t_act: Act in _top_epilogues:
+			p_act._top_epilogue_acts.erase(t_act)
+
+
+		# Recurse further down chain
+		_clear_top_epilogues(p_act, _top_epilogues)
 static func _finish_prologues(of_act: Act, new_outcome: Outcome):
 
-	for p_act: Act in of_act._prologue_acts:
+	# Finish all prologues
+	var prologues_to_finish := of_act._prologue_acts  # Reference swap to avoid mutation
+	of_act._prologue_acts = {}
+	for p_act: Act in prologues_to_finish:
 		if(p_act != null):
 			p_act._finish(new_outcome)
+
+
+	# Merge back
+	of_act._prologue_acts.merge(prologues_to_finish)
 static func _finish_epilogues(of_act: Act, new_outcome: Outcome):
 
 	# Do not finish epilogues if retrying
 	if(new_outcome == Outcome.RETRY):
 		return
 
-	for e_act: Act in of_act._epilogue_acts:
+
+	# Finish all epilogues
+	var epilogues_to_finish := of_act._epilogue_acts  # Reference swap to avoid mutation
+	of_act._epilogue_acts = {}
+	for e_act: Act in epilogues_to_finish:
 		e_act._continue_prologue(of_act, new_outcome)
-static func _clear_prologue_chain(of_act: Act):
-	
-	# Recurse clear
-	for p_act: Act in of_act._prologue_acts:
-		if(p_act != null):
-			_clear_prologue_chain(p_act)
-	
-	of_act._epilogue_acts.clear()
-	of_act._top_epilogue_acts.clear()
-	of_act._prologue_acts.clear()
+
+
+	# Merge back
+	of_act._epilogue_acts.merge(epilogues_to_finish)
 func _can_perform_impl() -> bool:
 
 	# Return if null theater
@@ -477,7 +547,8 @@ func _prologue_impl():
 
 
 	# Let theater know this act has started
-	_theater._stage_ongoing(self)
+	if(_theater != null):
+		_theater._stage_ongoing(self)
 	if(_status != Status.PROLOGUING): return
 
 
@@ -572,9 +643,9 @@ func _enter_impl():
 
 
 	# Start ticking
-	if(can_tick(TickFlags.TICK)):
+	if(can_tick(TickFlags.TICK) && _theater != null):
 		_theater._stage_tick(self)
-	if(can_tick(TickFlags.PHYSICS_TICK)):
+	if(can_tick(TickFlags.PHYSICS_TICK) && _theater != null):
 		_theater._stage_physics_tick(self)
 
 
@@ -635,9 +706,9 @@ func _exit_impl():
 	if(_prev_status == Status.ENTERING || _prev_status == Status.TICKING):
 		
 		# Stop ticking
-		if(can_tick(TickFlags.TICK)):
+		if(can_tick(TickFlags.TICK) && _theater != null):
 			_theater._unstage_tick(self)
-		if(can_tick(TickFlags.PHYSICS_TICK)):
+		if(can_tick(TickFlags.PHYSICS_TICK) && _theater != null):
 			_theater._unstage_physics_tick(self)
 
 
@@ -653,10 +724,12 @@ func _exit_impl():
 		on_post_exit.emit(self)
 
 
-	# Finish epilogues and prologues & clear chain
+	# Finish prologue chain then clear any stale links
 	_finish_epilogues(self, _outcome)
 	_finish_prologues(self, Outcome.INTERRUPTED if _outcome == Outcome.RETRY else _outcome)
-	_clear_prologue_chain(self)
+	_clear_top_epilogues(self)  # Intentionally kept before clear prologue chain DO NOT CHANGE
+	_clear_prologue_chain(self, _outcome == Outcome.RETRY)
+	_top_epilogue_acts.clear()
 
 
 	# Unblock
@@ -673,12 +746,15 @@ func _exit_impl():
 			_perform_impl()
 			return
 		
-		# set outcome to failure if could not retry
+		# Set outcome to failure & clean up epilogues if could not retry
 		_outcome = Outcome.FAILURE
-	
+		_finish_epilogues(self, _outcome)
+		_clear_prologue_chain(self)
+
 
 	# Let theater know this is act has ended
-	_theater._unstage_ongoing(self)
+	if(_theater != null):
+		_theater._unstage_ongoing(self)
 
 
 	# Broadcast perform end

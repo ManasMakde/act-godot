@@ -70,6 +70,11 @@ var _is_enabled := true
 
 # Private Staging Methods
 func _add_act(new_act: Act):
+	
+	# Return if null act
+	if(new_act == null):
+		return
+
 
 	# Mark as pending if abort all is ongoing
 	if(_is_aborting_all):
@@ -78,6 +83,11 @@ func _add_act(new_act: Act):
 
 	_all_acts[new_act] = true
 func _remove_act(old_act: Act):
+
+	# Return if null act
+	if(old_act == null):
+		return
+	
 
 	# Mark as pending if abort all is ongoing
 	if(_is_aborting_all):
@@ -125,8 +135,7 @@ func _stage_deferred(act: Act, flag: Act.TickFlags):
 	if(act == null):
 		return
 	
-	
-	_deferred_acts[act] = flag | _deferred_acts[act] if _deferred_acts.has(act) else flag
+	_deferred_acts[act] = (flag | _deferred_acts[act] as Act.TickFlags) if _deferred_acts.has(act) else flag
 func _unstage_deferred(act: Act):
 		
 	if(act == null):
