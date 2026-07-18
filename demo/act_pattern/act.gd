@@ -392,11 +392,6 @@ static func _assign_top_epilogues(e_act: Act, _top_epilogues: Dictionary[Act, bo
 
 		# Recurse further down chain
 		_assign_top_epilogues(p_act, _top_epilogues)
-func _write_log(message: String, override_name :=""):
-	if(!is_verbose):
-		return
-
-	push_warning(override_name if override_name !="" else _name, " ", message)
 func _can_perform_impl() -> bool:
 
 	# Return if null theater
@@ -696,5 +691,10 @@ func _redirect(new_status: Status, new_outcome := Outcome.PENDING):
 		_status = Status.EXITING
 		_outcome = new_outcome
 		_exit_impl()
+func _write_log(message: String, override_name :=""):
+	if(!is_verbose):
+		return
+
+	push_warning(override_name if override_name !="" else _name, " ", message)
 func _to_string() -> String:
 	return _name  # For easier debugging in editor
