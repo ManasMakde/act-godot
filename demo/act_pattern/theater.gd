@@ -23,8 +23,32 @@ func set_enabled(new_enabled:bool):
 
 	on_enable_changed.emit(self, _is_enabled)
 func abort_all():
+
+	# Return if already in between aborting all
+	if(_is_aborting_all):
+		return
+	
+
+	# Guard to avoid mutation
+	_is_aborting_all = true
+
+
+	# Abort all acts
 	for act: Act in _all_acts:
 		act.abort()
+
+
+	# Reset guard
+	_is_aborting_all = false
+
+
+	# Apply pending adds & removes after loop
+	for act: Act in _pending_mod_acts:
+		if(_pending_mod_acts[act]):
+			_all_acts[act] = true
+		else:
+			_all_acts.erase(act)
+	_pending_mod_acts.clear()
 func are_any_ongoing() -> bool:
 	return _ongoing_acts.size() != 0
 func get_all_acts() -> Dictionary[Act, bool]:
@@ -35,17 +59,31 @@ func get_all_acts() -> Dictionary[Act, bool]:
 var _all_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 var _ongoing_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 var _deferred_acts: Dictionary[Act, Act.TickFlags] = {}  # (Treat as HashSet)
+var _pending_mod_acts: Dictionary[Act, bool] = {}
 var _staged_tick_acts: Dictionary[Act, bool] = {}
 var _staged_physics_tick_acts: Dictionary[Act, bool] = {}
 var _acts_to_tick: Dictionary[Act, bool] = {}
 var _acts_to_physics_tick: Dictionary[Act, bool] = {}
+var _is_aborting_all := false
 var _is_enabled := true
 
 
 # Private Staging Methods
 func _add_act(new_act: Act):
+
+	# Mark as pending if abort all is ongoing
+	if(_is_aborting_all):
+		_pending_mod_acts[new_act] = true
+		return
+
 	_all_acts[new_act] = true
 func _remove_act(old_act: Act):
+
+	# Mark as pending if abort all is ongoing
+	if(_is_aborting_all):
+		_pending_mod_acts[old_act] = false
+		return
+
 	_all_acts.erase(old_act)
 func _stage_ongoing(act: Act):
 
@@ -66,6 +104,11 @@ func _stage_ongoing(act: Act):
 	on_perform_start.emit(self, act)
 func _unstage_ongoing(act: Act):
 
+	# Return if act is null or was never staged ongoing
+	if(act == null || !_ongoing_acts.has(act)):
+		return
+
+	
 	# Remove as ongoing act
 	_ongoing_acts.erase(act)
 
@@ -78,11 +121,12 @@ func _unstage_ongoing(act: Act):
 	if(!are_any_ongoing()):
 		on_all_perform_end.emit(self)
 func _stage_deferred(act: Act, flag: Act.TickFlags):
-		
+	
 	if(act == null):
 		return
 	
-	_deferred_acts[act] = flag
+	
+	_deferred_acts[act] = flag | _deferred_acts[act] if _deferred_acts.has(act) else flag
 func _unstage_deferred(act: Act):
 		
 	if(act == null):

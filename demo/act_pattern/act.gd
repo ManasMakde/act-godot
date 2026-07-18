@@ -265,7 +265,7 @@ func _block_self(by_act: Act, block_type: BlockType):
 
 	# Return if already blocked
 	if(_blocked_by_acts.has(by_act)):
-		_write_log("Failed to block, Already blocked by ", by_act._name)
+		_write_log("Failed to block, Already blocked by " + by_act._name)
 		return
 	
 
@@ -297,7 +297,7 @@ func _unblock_self(by_act: Act):
 
 	# Return if not currently blocked by act
 	if(!_blocked_by_acts.has(by_act)):
-		_write_log("Failed to unblock, Act is not blocked by ", by_act._name)
+		_write_log("Failed to unblock, Act is not blocked by " + by_act._name)
 		return
 	
 
@@ -313,7 +313,8 @@ func _block_others():
 		act._block_self(self, _acts_to_block[act])
 func _unblock_others():
 	for act: Act in _acts_to_block:
-		act._unblock_self(self)
+		if(_acts_to_block[act] == BlockType.PERSISTENT):  # Skip oneshot
+			act._unblock_self(self)
 
 
 
@@ -485,8 +486,12 @@ func _prologue_impl():
 	_performed_on_physics_tick = Engine.get_physics_frames()
 
 	
-	# Assign prologues, epilogues & top epilogues
+	# Assign prologues & epilogues
 	_assign_prologue_chain(self)
+	if(_status != Status.PROLOGUING): return  # guard
+
+
+	# Assign top epilogues
 	_assign_top_epilogues(self)
 
 
