@@ -41,6 +41,15 @@ For a complete explaination & implementation in other game engines visit the [ma
 | \(act: Act,<br> blocking_act: Act,<br> [block_type](#blocktype): BlockType,<br>did_block: bool\) | [on_block_changed](#on_block_changed) |
 
 
+| Access | Type | Properties |
+|--------|------|--------------|
+| public | Callable | [prologue](#prologue) |
+| public | Array[Callable] | [perform_conditions](#perform_conditions) |
+| public | bool | [is_verbose](#is_verbose) |
+| protected | bool | [_can_reperform](#_can_reperform) |
+| protected | [TickFlags](#tickflags) | [_tick_flags](#_tick_flags) |
+
+
 | Access | Type | Methods |
 |--------|------|--------------|
 | public | void | [init](#init)(theater: Theater, name := "", initially_enabled := true) |
@@ -78,14 +87,6 @@ For a complete explaination & implementation in other game engines visit the [ma
 | protected | void | [_unblock_self](#_unblock_self)(by_act: Act) <abbr title="">Virtual</abbr> |
 | protected | void | [_block_others](#_block_others)() <abbr title="">Virtual</abbr> |
 | protected | void | [_unblock_others](#_unblock_others)() <abbr title="">Virtual</abbr> |
-
-
-| Access | Type | Properties |
-|--------|------|--------------|
-| public | Callable | [prologue](#prologue) |
-| public | Array[Callable] | [perform_conditions](#perform_conditions) |
-| protected | bool | [_can_reperform](#_can_reperform) |
-| protected | [TickFlags](#tickflags) | [_tick_flags](#_tick_flags) |
 
 
 <br/>
@@ -797,6 +798,15 @@ func _ready():
 	)
 	jump_act.init(theater, "Jump Act")
 ```
+
+
+---
+
+
+### <a id="is_verbose"></a> var is_verbose: bool
+`Default: true`  
+
+Controls whether or not to print warnings. Set to `false` to silence them.
 
 
 ---

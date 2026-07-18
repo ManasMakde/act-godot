@@ -45,14 +45,15 @@ signal on_post_cleanup(act: Act)
 signal on_enable_changed(act: Act, new_is_enabled: bool)
 signal on_block_changed(act: Act, blocking_act: Act, block_type: BlockType, did_block: bool)
 
-var prologue: Callable = func(_act: Act) -> Array[Act]: return []  # List all acts to perform before this act, Return [ null ] for failure outcome
+var prologue := func(_act: Act) -> Array[Act]: return []  # List all acts to perform before this act, Return [ null ] for failure outcome
 var perform_conditions: Array[Callable] = []  # Externally extendable conditions for _can_perform(), Signature func(_act: Act) -> bool
+var is_verbose := true  # Toggle for warning messages
 
 func init(theater: Theater, name := "", initially_enabled := true):
 
 	# Warn if null theater provided
 	if (theater == null):
-		push_warning(name, " Null theater provided for initialization!");
+		_write_log(" Null theater provided for initialization!", name);
 		return;
 
 
@@ -125,7 +126,7 @@ func add_to_block(acts: Array[Act], block_type := BlockType.PERSISTENT):
 
 		# Skip if self (reserved for enable/disable)
 		if(b_act == self):
-			push_warning(_name, " Trying to block self!")
+			_write_log("Trying to block self!")
 			continue
 		
 
@@ -391,22 +392,41 @@ static func _assign_top_epilogues(e_act: Act, _top_epilogues: Dictionary[Act, bo
 
 		# Recurse further down chain
 		_assign_top_epilogues(p_act, _top_epilogues)
+func _write_log(message: String, override_name :=""):
+	if(!is_verbose):
+		return
+
+	push_warning(override_name if override_name !="" else _name, " ", message)
 func _can_perform_impl() -> bool:
 
 	# Return if null theater
 	if(_theater == null):
-		push_warning(_name, "Null theater found, Initialize first!")
+		_write_log("Cannot perform, Theater is null! Have you initialized act?")
 		return false
 
 
-	# Return conditions
-	if(!is_enabled() || !_theater.is_enabled() || is_blocked() || (!_can_reperform && is_ongoing())):
+	# Return if disabled
+	if(!is_enabled() || !_theater.is_enabled()):
+		_write_log("Cannot perform, act or theater is disabled!")
+		return false
+	
+	
+	# Return if blocked
+	if(is_blocked()):
+		_write_log("Cannot perform, act is blocked!")
+		return false
+	
+
+	# Return if already ongoing
+	if(!_can_reperform && is_ongoing()):
+		_write_log("Cannot perform, act is ongoing!")
 		return false
 	
 
 	# Return if any external condition is false
 	for cond: Callable in perform_conditions:
 		if(!cond.call(self)):
+			_write_log("Cannot perform, failed an external perform condition!")
 			return false
 
 
