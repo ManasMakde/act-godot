@@ -295,7 +295,7 @@ func _block_self(by_act: Act, block_type: BlockType):
 		on_block_changed.emit(self, by_act, block_type, true)
 func _unblock_self(by_act: Act):
 
-	# Return in null act
+	# Return incase null act
 	if(by_act == null):
 		_write_log("Failed to unblock, null act provided!")
 		return
@@ -353,12 +353,12 @@ static func _in_same_prologue_chain(act_a: Act, act_b: Act) -> bool:
 		return false
 	
 
-	# Incase act_a is a top epilogue
+	# Incase act A is a top epilogue
 	if(act_a._epilogue_acts.size() == 0 && act_b._top_epilogue_acts.has(act_a)):
 		return true
 	
 
-	# Incase act_b is a top epilogue
+	# Incase act B is a top epilogue
 	if(act_b._epilogue_acts.size() == 0 && act_a._top_epilogue_acts.has(act_b)):
 		return true
 
@@ -540,7 +540,6 @@ func _perform_impl():
 	_redirect(Status.PROLOGUING)
 func _prologue_impl():
 	
-
 	# Broadcast perform start
 	on_perform_start.emit(self)
 	if(_status != Status.PROLOGUING): return
@@ -559,7 +558,7 @@ func _prologue_impl():
 	
 	# Assign prologues & epilogues
 	_assign_prologue_chain(self)
-	if(_status != Status.PROLOGUING): return  # guard
+	if(_status != Status.PROLOGUING): return  # Guard
 
 
 	# Assign top epilogues
