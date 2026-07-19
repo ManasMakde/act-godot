@@ -23,6 +23,7 @@ For a complete explaination & implementation in other game engines visit the [ma
 
 | Signature    | Signals |
 |--------------|-------|
+| \(act: Act\) | [on_perform_start](#on_perform_start) |
 | \(act: Act\) | [on_pre_setup](#on_pre_setup) |
 | \(act: Act\) | [on_post_setup](#on_post_setup) |
 | \(act: Act\) | [on_pre_prologue](#on_pre_prologue) |
@@ -35,6 +36,7 @@ For a complete explaination & implementation in other game engines visit the [ma
 | \(act: Act\) | [on_post_physics_tick](#on_post_physics_tick) |
 | \(act: Act\) | [on_pre_exit](#on_pre_exit) |
 | \(act: Act\) | [on_post_exit](#on_post_exit) |
+| \(act: Act\) | [on_perform_end](#on_perform_end) |
 | \(act: Act\) | [on_pre_cleanup](#on_pre_cleanup) |
 | \(act: Act\) | [on_post_cleanup](#on_post_cleanup) |
 | \(act: Act,<br> new_is_enabled: bool\) | [on_enable_changed](#on_enable_changed) |
@@ -66,7 +68,6 @@ For a complete explaination & implementation in other game engines visit the [ma
 | public | bool | [is_ongoing](#is_ongoing)() |
 | public | bool | [is_enabled](#is_enabled)() |
 | public | bool | [is_blocked](#is_blocked)() |
-| public | bool | [did_enter](#did_enter)() |
 | public | bool | [can_tick](#can_tick)(type: [TickFlags](#tickflags)) |
 | public | [Outcome](#outcome) | [get_outcome](#get_outcome)() |
 | public | Theater | [get_theater](#get_theater)() |
@@ -155,6 +156,13 @@ For a complete explaination & implementation in other game engines visit the [ma
 ---
 
 
+### <a id="on_perform_start"></a> signal on_perform_start(act: Act)
+Emitted just before the start of the perform lifecycle.
+
+
+---
+
+
 ### <a id="on_pre_setup"></a> signal on_pre_setup(act: Act)
 Emitted just before [_setup](#_setup)() method is called.
 
@@ -236,6 +244,13 @@ Emitted just before [_exit](#_exit)() method is called.
 
 ### <a id="on_post_exit"></a> signal on_post_exit(act: Act)
 Emitted just after [_exit](#_exit)() method has been called.
+
+
+---
+
+
+### <a id="on_perform_end"></a> signal on_perform_end(act: Act)
+Emitted just after the end of the perform lifecycle. 
 
 
 ---
@@ -420,28 +435,6 @@ Returns `true` if the act is currently enabled.
 
 ### <a id="is_blocked"></a> func is_blocked() -> bool
 Returns `true` if the act is currently blocked by 1 or more other acts.
-
-
----
-
-
-### <a id="did_enter"></a> func did_enter() -> bool
-Returns `true` if the act has gone through [`_enter()`](#_enter) while performing.  
-Useful for determining if the act reached [`_exit()`](#_exit) via enter/tick or via failed prologue in it's [lifecycle][Act-Lifecycle]  
-```gdscript
-my_act_1.prologue = func(act: Act) -> Array[Act]:
-	return [null]
-my_act_1.on_post_exit.connect(func(act: Act):
-	print(my_act_1.did_enter())  # false
-)
-my_act_1.perform()
-
-
-my_act_2.on_post_exit.connect(func(act: Act):
-	print(my_act_2.did_enter())  # true
-)
-my_act_2.perform()
-```
 
 
 ---
@@ -770,7 +763,7 @@ func _unblock_others():
 `Default: func(act: Act) -> Array[Act]: return []`  
 
 Assign this with a function which returns a list of acts, All acts in that list will be performed in parallel before the main act is performed.  
-If the list contains `null` or if any act failed to perform it will be treated as prologuing failed & directly proceeed to [`_exit()`](#_exit) with [`did_enter()`](#did_perform) as `false`.  
+If the list contains `null` or if any act failed to perform it will be treated as act failed.  
 ```gdscript
 my_act.prologue = func(act: Act) -> Array[Act]:
 
