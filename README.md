@@ -24,6 +24,7 @@ For a complete explaination & implementation in other game engines visit the [ma
 | Signature    | Signals |
 |--------------|-------|
 | \(act: Act\) | [on_perform_start](#on_perform_start) |
+| \(act: Act\) | [on_perform_end](#on_perform_end) |
 | \(act: Act\) | [on_pre_setup](#on_pre_setup) |
 | \(act: Act\) | [on_post_setup](#on_post_setup) |
 | \(act: Act\) | [on_pre_prologue](#on_pre_prologue) |
@@ -36,7 +37,6 @@ For a complete explaination & implementation in other game engines visit the [ma
 | \(act: Act\) | [on_post_physics_tick](#on_post_physics_tick) |
 | \(act: Act\) | [on_pre_exit](#on_pre_exit) |
 | \(act: Act\) | [on_post_exit](#on_post_exit) |
-| \(act: Act\) | [on_perform_end](#on_perform_end) |
 | \(act: Act\) | [on_pre_cleanup](#on_pre_cleanup) |
 | \(act: Act\) | [on_post_cleanup](#on_post_cleanup) |
 | \(act: Act,<br> new_is_enabled: bool\) | [on_enable_changed](#on_enable_changed) |
@@ -163,6 +163,13 @@ Emitted just before the start of the perform lifecycle.
 ---
 
 
+### <a id="on_perform_end"></a> signal on_perform_end(act: Act)
+Emitted just after the end of the perform lifecycle.
+
+
+---
+
+
 ### <a id="on_pre_setup"></a> signal on_pre_setup(act: Act)
 Emitted just before [_setup](#_setup)() method is called.
 
@@ -244,13 +251,6 @@ Emitted just before [_exit](#_exit)() method is called.
 
 ### <a id="on_post_exit"></a> signal on_post_exit(act: Act)
 Emitted just after [_exit](#_exit)() method has been called.
-
-
----
-
-
-### <a id="on_perform_end"></a> signal on_perform_end(act: Act)
-Emitted just after the end of the perform lifecycle. 
 
 
 ---

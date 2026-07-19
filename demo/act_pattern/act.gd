@@ -29,6 +29,7 @@ enum BlockType {
 
 # Public
 signal on_perform_start(act: Act)
+signal on_perform_end(act: Act)
 signal on_pre_setup(act: Act)
 signal on_post_setup(act: Act)
 signal on_pre_prologue(act: Act)
@@ -41,7 +42,6 @@ signal on_pre_physics_tick(act: Act)
 signal on_post_physics_tick(act: Act)
 signal on_pre_exit(act: Act)
 signal on_post_exit(act: Act)
-signal on_perform_end(act: Act)
 signal on_pre_cleanup(act: Act)
 signal on_post_cleanup(act: Act)
 signal on_enable_changed(act: Act, new_is_enabled: bool)
