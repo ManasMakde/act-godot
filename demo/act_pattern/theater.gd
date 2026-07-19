@@ -58,7 +58,7 @@ func get_all_acts() -> Dictionary[Act, bool]:
 # Private Properties
 var _all_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 var _ongoing_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
-var _deferred_acts: Dictionary[Act, Act.TickFlags] = {}  # (Treat as HashSet)
+var _deferred_acts: Dictionary[Act, Act.TickFlags] = {}
 var _pending_mod_acts: Dictionary[Act, bool] = {}
 var _staged_tick_acts: Dictionary[Act, bool] = {}
 var _staged_physics_tick_acts: Dictionary[Act, bool] = {}
