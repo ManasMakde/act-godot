@@ -135,7 +135,7 @@ func _stage_deferred(act: Act, flag: Act.TickFlags):
 	if(act == null):
 		return
 	
-	_deferred_acts[act] = (flag | _deferred_acts[act] as Act.TickFlags) if _deferred_acts.has(act) else flag
+	_deferred_acts[act] = ((flag | _deferred_acts[act]) as Act.TickFlags) if _deferred_acts.has(act) else flag
 func _unstage_deferred(act: Act):
 		
 	if(act == null):
