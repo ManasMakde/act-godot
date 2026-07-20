@@ -284,6 +284,75 @@ Emitted whenever the act has been blocked/unblocked.
 ---
 
 
+### <a id="prologue"></a> var prologue: Callable
+`Default: func(act: Act) -> Array[Act]: return []`  
+
+Assign this with a function which returns a list of acts, All acts in that list will be performed in parallel before the main act is performed.  
+If the list contains `null` or if any act failed to perform it will be treated as act failed.  
+```gdscript
+my_act.prologue = func(act: Act) -> Array[Act]:
+
+	if to_fail:
+		return [null]  # This will intentionally fail the act
+
+	return [my_act_1, my_act_2]  # my_act_1 & my_act_2 will be performed in parallel
+```
+
+
+---
+
+
+### <a id="perform_conditions"></a> var perform_conditions: Array[Callable]
+`Default: []`  
+
+Used when overriding [`_can_perform()`](#_can_perform) isn't sufficient and additional external conditions are required. Signature is `func(act: Act) -> bool`.
+```gdscript
+func _physics_process(_delta):
+	jump_act.perform()
+
+func _ready():
+	jump_act.perform_conditions.append(func(_act: Act) -> bool:
+		return Input.is_action_just_pressed("jump")  # Only jump when jump input is pressed
+	)
+	jump_act.init(theater, "Jump Act")
+```
+
+
+---
+
+
+### <a id="is_verbose"></a> var is_verbose: bool
+`Default: true`  
+
+Controls whether or not to print warnings. Set to `false` to silence them.
+
+
+---
+
+
+### <a id="_can_reperform"></a> var _can_reperform: bool
+> **Note:** Should only be assigned inside the [`_setup()`](#_setup) method.  
+
+`Default: false` 
+
+If `true` then calling `perform()` while act is already performing will finish interruptively current perform and then reperform.  
+If `false` then current ongoing perform must be completed before calling `perform()` again.
+
+
+---
+
+
+### <a id="_tick_flags"></a> var _tick_flags: TickFlags
+> **Note:** Should only be assigned inside the [`_setup()`](#_setup) method.  
+
+`Default: TickFlags.NONE`  
+
+Determines which tick methods are to be called. Look into [`_enter()`](#_enter) & [`TickFlags`](#tickflags) to learn more.
+
+
+---
+
+
 ### <a id="init"></a> func init(theater: Theater, name := "", initially_enabled := true)
 This method is used to initialize the act & it must be called once before you can call [`perform()`](#perform).  
 Generally this will be called in [`Node._ready()`][Godot-Ready] though it can be used elsewhere if required.  
@@ -754,75 +823,6 @@ func _unblock_others():
 
 	# custom functionality
 ```
-
-
----
-
-
-### <a id="prologue"></a> var prologue: Callable
-`Default: func(act: Act) -> Array[Act]: return []`  
-
-Assign this with a function which returns a list of acts, All acts in that list will be performed in parallel before the main act is performed.  
-If the list contains `null` or if any act failed to perform it will be treated as act failed.  
-```gdscript
-my_act.prologue = func(act: Act) -> Array[Act]:
-
-	if to_fail:
-		return [null]  # This will intentionally fail the act
-
-	return [my_act_1, my_act_2]  # my_act_1 & my_act_2 will be performed in parallel
-```
-
-
----
-
-
-### <a id="perform_conditions"></a> var perform_conditions: Array[Callable]
-`Default: []`  
-
-Used when overriding [`_can_perform()`](#_can_perform) isn't sufficient and additional external conditions are required. Signature is `func(act: Act) -> bool`.
-```gdscript
-func _physics_process(_delta):
-	jump_act.perform()
-
-func _ready():
-	jump_act.perform_conditions.append(func(_act: Act) -> bool:
-		return Input.is_action_just_pressed("jump")  # Only jump when jump input is pressed
-	)
-	jump_act.init(theater, "Jump Act")
-```
-
-
----
-
-
-### <a id="is_verbose"></a> var is_verbose: bool
-`Default: true`  
-
-Controls whether or not to print warnings. Set to `false` to silence them.
-
-
----
-
-
-### <a id="_can_reperform"></a> var _can_reperform: bool
-> **Note:** Should only be assigned inside the [`_setup()`](#_setup) method.  
-
-`Default: false` 
-
-If `true` then calling `perform()` while act is already performing will finish interruptively current perform and then reperform.  
-If `false` then current ongoing perform must be completed before calling `perform()` again.
-
-
----
-
-
-### <a id="_tick_flags"></a> var _tick_flags: TickFlags
-> **Note:** Should only be assigned inside the [`_setup()`](#_setup) method.  
-
-`Default: TickFlags.NONE`  
-
-Determines which tick methods are to be called. Look into [`_enter()`](#_enter) & [`TickFlags`](#tickflags) to learn more.
 
 
 <br/>
