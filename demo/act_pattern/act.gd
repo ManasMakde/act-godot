@@ -188,6 +188,8 @@ func did_perform_ever() -> bool:  # True if act was performed atleast once since
 	return _performed_on_tick != -1 || _performed_on_physics_tick != -1
 func is_ongoing() -> bool:
 	return _status != Status.NONE
+func is_active() -> bool:
+	return _status != Status.NONE && _status != Status.PROLOGUING;
 func is_enabled() -> bool:
 	return !_blocked_by_acts.has(self)
 func is_blocked() -> bool:
@@ -199,8 +201,6 @@ func is_blocked() -> bool:
 	return _blocked_by_acts.size() != 0
 func can_tick(type: TickFlags) -> bool:
 	return bool(_tick_flags & type)
-func get_outcome() -> Outcome:
-	return _outcome
 func get_theater() -> Theater:
 	return _theater
 func get_owner() -> Node:
@@ -211,6 +211,10 @@ func get_owner() -> Node:
 	
 
 	return _theater.get_parent()
+func get_status() -> Status:
+	return _status
+func get_outcome() -> Outcome:
+	return _outcome
 func get_delta() -> float: 
 	return _theater.get_process_delta_time() if _theater != null else 0.0
 func get_physics_delta() -> float:
@@ -428,8 +432,10 @@ static func _do_dicts_overlap(a: Dictionary[Act, bool], b: Dictionary[Act, bool]
 			return true
 	return false
 static func _first_key(dict: Dictionary[Act, bool]) -> Act:  # Get first key of dict
-	for(act: Act in dict):
+	for act: Act in dict:
 		return act
+	
+	return null
 func _can_perform_impl() -> bool:
 
 	# Return if null theater

@@ -66,12 +66,14 @@ For a complete explaination & implementation in other game engines visit the [ma
 | public | bool | [did_perform](#did_perform)(tick_flag := [TickFlags](#tickflags)) |
 | public | bool | [did_perform_ever](#did_perform_ever)() |
 | public | bool | [is_ongoing](#is_ongoing)() |
+| public | bool | [is_active](#is_active)() |
 | public | bool | [is_enabled](#is_enabled)() |
 | public | bool | [is_blocked](#is_blocked)() |
 | public | bool | [can_tick](#can_tick)(type: [TickFlags](#tickflags)) |
-| public | [Outcome](#outcome) | [get_outcome](#get_outcome)() |
 | public | Theater | [get_theater](#get_theater)() |
 | public | Node | [get_owner](#get_owner)() |
+| public | [Status](#status) | [get_status](#get_status)() |
+| public | [Outcome](#outcome) | [get_outcome](#get_outcome)() |
 | public | float | [get_delta](#get_delta)() |
 | public | float | [get_physics_delta](#get_physics_delta)() |
 | public | String | [get_name](#get_name)() |
@@ -495,6 +497,13 @@ Returns `true` if the act is currently performing.
 ---
 
 
+### <a id="is_active"></a> func is_active() -> bool
+Returns `true` if the act is currently between entering & exiting.
+
+
+---
+
+
 ### <a id="is_enabled"></a> func is_enabled() -> bool
 Returns `true` if the act is currently enabled.
 
@@ -516,14 +525,6 @@ Returns `true` if the act can tick on the given flag type(s).
 ---
 
 
-### <a id="get_outcome"></a> func get_outcome() -> Outcome
-Returns the outcome of [`_enter()`](#_enter) or any of the tick methods.  
-However this is only to be used inside the lifecycle methods since [`_exit()`](#_exit) will internally reset the flag.
-
-
----
-
-
 ### <a id="get_theater"></a> func get_theater() -> Theater
 Returns the `Theater` the act belongs to.
 
@@ -533,6 +534,21 @@ Returns the `Theater` the act belongs to.
 
 ### <a id="get_owner"></a> func get_owner() -> Node
 Returns the [node][Godot-Node] the `Theater` is a child of, Returns `null` if theater is not assigned.
+
+
+---
+
+
+### <a id="get_status"></a> func get_status() -> [Status](#status)
+Returns the current [Status](#status) of the act.
+
+
+---
+
+
+### <a id="get_outcome"></a> func get_outcome() -> [Outcome](#outcome)
+Returns the outcome of [`_enter()`](#_enter) or any of the tick methods.  
+However this is only to be used inside the lifecycle methods since [`_exit()`](#_exit) will internally reset the flag.
 
 
 ---
@@ -631,7 +647,7 @@ func _can_perform() -> bool:
 ---
 
 
-### <a id="_enter"></a> func _enter() -> Outcome
+### <a id="_enter"></a> func _enter() -> [Outcome](#outcome)
 
 > **Note:** This method is only meant to be overridden never invoked, Except when using `super._enter()`.
 
