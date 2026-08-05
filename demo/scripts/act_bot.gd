@@ -75,12 +75,12 @@ func _ready():
 
 	# Setup Walk
 	walk_act.speed = walk_speed
-	walk_act.init(theater)
+	walk_act.init("Walk Act", theater)
 
 	# Setup Run
 	run_act.speed = run_speed
-	run_act.init(theater)
+	run_act.init("Run Act", theater)
 
 	# Setup Jump
 	jump_act.speed = jump_velocity
-	jump_act.init(theater)
+	jump_act.init("Jump Act", theater)
