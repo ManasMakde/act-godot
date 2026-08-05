@@ -1,7 +1,7 @@
 # 🎭 act-godot
 
 [![Godot Engine](https://img.shields.io/badge/Godot-478CBF?style=flat&logo=godotengine&logoColor=white)](https://godotengine.org)
-![Status: Alpha](https://img.shields.io/badge/status-0.1.0--alpha-orange)
+![Status: Alpha](https://img.shields.io/badge/status-0.1.1--alpha-orange)
 ![License](https://img.shields.io/github/license/ManasMakde/act-godot?style=flat&color=yellow)
 
 This is the godot implementation of the **Act Pattern**.  
