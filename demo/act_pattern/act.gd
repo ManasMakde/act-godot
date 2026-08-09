@@ -31,18 +31,18 @@ enum TickFlags {
 	PHYSICS_TICK = 1 << 1
 }
 enum Status {
-	NONE = 0,
+	NONE,
 	PROLOGUING,
 	ENTERING,
 	TICKING,
 	EXITING
 }
 enum Outcome {
-	INTERRUPTED = -2,
-	FAILURE = -1,
-	PENDING = 0,
-	SUCCESS = 1,
-	RETRY = 2
+	INTERRUPTED,
+	FAILURE,
+	PENDING,
+	SUCCESS,
+	RETRY
 }
 enum BlockType {
 	INTERRUPT,
@@ -72,11 +72,11 @@ signal on_post_cleanup(act: Act)
 signal on_enable_changed(act: Act, new_is_enabled: bool)
 signal on_block_changed(act: Act, blocking_act: Act, block_type: BlockType, did_block: bool)
 
-var prologue := func(_act: Act) -> Array[Act]: return []  # List all acts to perform before this act, Return { null } for failure outcome
-var perform_conditions: Array[Callable] = []  # Externally extendable conditions for CanPerform()
-var is_verbose := false  # Toggle for warning messages
+var prologue := func(_act: Act) -> Array[Act]: return []
+var perform_conditions: Array[Callable] = []
+var is_verbose := false
 
-func init(new_name: String = "", new_theater: Theater = null, initially_enabled: bool = true):
+func init(new_name: String = "", new_theater: Theater = null, is_initially_enabled: bool = true):
 
 	# Return if trying to reinitialize
 	if(_has_initialized):
@@ -106,7 +106,7 @@ func init(new_name: String = "", new_theater: Theater = null, initially_enabled:
 
 
 	# Disable Initially
-	if(!initially_enabled):
+	if(!is_initially_enabled):
 		_block_self(self, BlockType.PERSISTENT)
 
 
@@ -155,10 +155,6 @@ func deinit():
 	_cleanup()
 
 
-	# Broadcast post cleanup
-	on_post_cleanup.emit(self)
-
-
 	# Unassign owning theater
 	if(_theater != null):
 		_theater._remove_act(self)
@@ -174,6 +170,10 @@ func deinit():
 	# Mark as deinitialization completed
 	_is_initializing = false
 	_has_initialized = false
+
+
+	# Broadcast post cleanup
+	on_post_cleanup.emit(self)
 func perform():
 
 	if(_can_perform_impl()):
@@ -204,8 +204,8 @@ func abort():
 func add_to_block(acts: Array[Act], block_type: BlockType = BlockType.PERSISTENT):
 	for b_act in acts:
 		
-		# Skip if self (reserved for enable/disable)
-		if(b_act == self):
+		# Skip if self (reserved for enable/disable) or null
+		if(b_act == self || b_act == null):
 			_write_log("Trying to block self!")
 			continue
 
@@ -220,8 +220,8 @@ func add_to_block(acts: Array[Act], block_type: BlockType = BlockType.PERSISTENT
 func remove_from_block(acts: Array[Act]):
 	for b_act in acts:
 
-		# Skip if self (reserved for enable/disable)
-		if(b_act == self):
+		# Skip if self (reserved for enable/disable) or null
+		if(b_act == self || b_act == null):
 			_write_log("Trying to unblock self!")
 			continue
 
@@ -263,6 +263,10 @@ func did_perform(tick_flag: TickFlags = TickFlags.PHYSICS_TICK) -> bool:
 		has_performed = has_performed || _performed_on_physics_tick == Engine.get_physics_frames()
 
 	return has_performed
+func has_initialized() -> bool:
+	return _has_initialized
+func is_initializing() -> bool:
+	return _is_initializing
 func is_ongoing() -> bool:
 	return _status != Status.NONE
 func is_active() -> bool:
@@ -307,7 +311,7 @@ func get_physics_delta() -> float:
 	return _theater.get_physics_process_delta_time() if _theater != null else 0.0
 func get_name() -> String:
 	return _name
-static func seq(p_arrays:Array[Array]) -> Array:  # Only use inside prologue
+static func seq(p_arrays:Array[Array]) -> Array:
 
 	# Return if null
 	if(p_arrays == null):
@@ -341,8 +345,8 @@ static func seq(p_arrays:Array[Array]) -> Array:  # Only use inside prologue
 
 # Protected
 var _name := ""
-var _can_reperform := false  # Indicates if act can interrupt itself & restart perform, Only assign in Setup()
-var _tick_flags := TickFlags.NONE  # Indicates if act will be "Ticking" after entering, Only assign in Setup()
+var _can_reperform := false
+var _tick_flags := TickFlags.NONE
 
 func _setup():
 	pass
@@ -435,12 +439,12 @@ func _write_log(message: String, override_name: String = ""):
 
 
 # Private
-var _theater: Theater = null  # Which theater this act belongs to
-var _status := Status.NONE  # Keeps track of where in the perform life cycle the act is currently
+var _theater: Theater = null
+var _status := Status.NONE
 var _prev_status := Status.NONE
-var _outcome := Outcome.PENDING  # Denotes how the act ended
-var _acts_to_block: Dictionary[Act, BlockType] = {}  # Which acts to block when performing this act
-var _blocked_by_acts: Dictionary[Act, bool] = {}  # Which acts are blocking this act # (Treat as HashSet)
+var _outcome := Outcome.PENDING
+var _acts_to_block: Dictionary[Act, BlockType] = {}
+var _blocked_by_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 
 var _epilogue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 var _pending_epilogue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)

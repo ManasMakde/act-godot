@@ -44,7 +44,7 @@
 
 | Access | Type | Methods |
 |--------|------|--------------|
-| public | void | [init](#init)(name := "", theater: Theater = null, initially_enabled := true) |
+| public | void | [init](#init)(name := "", theater: Theater = null, is_initially_enabled := true) |
 | public | void | [deinit](#deinit)() |
 | public | void | [perform](#perform)() |
 | public | void | [perform_deferred](#perform_deferred)(tick_flag := [TickFlags](#tickflags)) |
@@ -55,6 +55,8 @@
 | public | void | [set_enabled](#set_enabled)(new_enabled: bool) |
 | public | bool | [did_perform](#did_perform)(tick_flag := [TickFlags](#tickflags)) |
 | public | bool | [did_perform_ever](#did_perform_ever)() |
+| public | bool | [has_initialized](#has_initialized)() |
+| public | bool | [is_initializing](#is_initializing)() |
 | public | bool | [is_ongoing](#is_ongoing)() |
 | public | bool | [is_active](#is_active)() |
 | public | bool | [is_enabled](#is_enabled)() |
@@ -357,7 +359,7 @@ Determines which tick methods are to be called. Look into [`_enter()`](#_enter) 
 ---
 
 
-### <a id="init"></a> func init(name := "", theater: Theater = null, initially_enabled := true)
+### <a id="init"></a> func init(name := "", theater: Theater = null, is_initially_enabled := true)
 This method is used to initialize the act & it must be called once before you can call [`perform()`](#perform).  
 Generally this will be called in [`Node._ready()`][Godot-Ready] though it can be used elsewhere if required.  
 ```gdscript
@@ -487,6 +489,21 @@ print(my_act.did_perform_ever())  # true
 my_act.deinit()
 print(my_act.did_perform_ever())  # false
 ```
+
+
+---
+
+
+### <a id="has_initialized"></a> func has_initialized() -> bool
+Returns `true` if the act has been [initialized](#init). Resets to `false` once [deinitialized](#deinit)
+
+
+
+---
+
+
+### <a id="is_initializing"></a> func is_initializing() -> bool
+Returns `true` if the act is currently in between [initializing](#init) or [deinitializing](#deinit).
 
 
 ---
