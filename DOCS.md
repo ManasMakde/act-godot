@@ -14,7 +14,7 @@
 |--------------|-------|
 | \(act: Act\) | [on_pre_setup](#on_pre_setup) |
 | \(act: Act\) | [on_post_setup](#on_post_setup) |
-| \(act: Act\) | [on_perform_start](#on_perform_start) |
+| \(act: Act\) | [on_perform_start](#on_perform_start_act) |
 | \(act: Act\) | [on_pre_prologue](#on_pre_prologue) |
 | \(act: Act,<br> p_act: Act,<br> [p_outcome](#outcome): Outcome\) | [on_prologue_complete](#on_prologue_complete) |
 | \(act: Act\) | [on_post_prologue](#on_post_prologue) |
@@ -26,7 +26,7 @@
 | \(act: Act\) | [on_post_physics_tick](#on_post_physics_tick) |
 | \(act: Act\) | [on_pre_exit](#on_pre_exit) |
 | \(act: Act\) | [on_post_exit](#on_post_exit) |
-| \(act: Act\) | [on_perform_end](#on_perform_end) |
+| \(act: Act\) | [on_perform_end](#on_perform_end_act) |
 | \(act: Act\) | [on_pre_cleanup](#on_pre_cleanup) |
 | \(act: Act\) | [on_post_cleanup](#on_post_cleanup) |
 | \(act: Act,<br> new_is_enabled: bool\) | [on_enable_changed](#on_enable_changed) |
@@ -128,8 +128,8 @@
 ### <a id="status"></a> enum Status
 - `NONE`: Indicates the act is not ongoing.  
 - `PROLOGUING`: Indicates the act is waiting on pending prologues to complete.
-- `ENTERING`: Indicates the act is carrying out it's core behaviour.  
-- `TICKING`: Indicates the act is ticking within any or all of it's [_tick](#_tick)() or [_physics_tick](#_physics_tick)() methods.
+- `ENTERING`: Indicates the act is carrying out its core behaviour.  
+- `TICKING`: Indicates the act is ticking within any or all of its [_tick](#_tick)() or [_physics_tick](#_physics_tick)() methods.
 - `EXITING`: Indicates the act perform has ended and is now finalizing.  
 
 
@@ -138,10 +138,10 @@
 
 ### <a id="outcome"></a> enum Outcome
 - `INTERRUPTED`: Indicates the act was interrupted externally while performing.  
-- `FAILURE`: Indicates the act failed to complete it's core behaviour.  
-- `PENDING`: Indicates the act is still pending for it's core behaviour to complete which might also indicate ticking if [_tick_flags](#_tick_flags) is assigned.  
-- `SUCCESS`: Indicates the act successfully completed it's core behaviour.  
-- `RETRY`:  Indicates the act is retrying it's core behaviour.  
+- `FAILURE`: Indicates the act failed to complete its core behaviour.  
+- `PENDING`: Indicates the act is still pending for its core behaviour to complete which might also indicate ticking if [_tick_flags](#_tick_flags) is assigned.  
+- `SUCCESS`: Indicates the act successfully completed its core behaviour.  
+- `RETRY`:  Indicates the act is retrying its core behaviour.  
 
 
 ---
@@ -169,8 +169,8 @@ Emitted just after [_setup](#_setup)() method has been called.
 ---
 
 
-### <a id="on_perform_start"></a> signal on_perform_start(act: Act)
-Emitted just before the start of the perform lifecycle.
+### <a id="on_perform_start_act"></a> signal on_perform_start(act: Act)
+Emitted just as [perform](#perform)() has started, before prologuing.
 
 
 ---
@@ -255,8 +255,8 @@ Emitted just after [_exit](#_exit)() method has been called.
 ---
 
 
-### <a id="on_perform_end"></a> signal on_perform_end(act: Act)
-Emitted just after the end of the perform lifecycle.
+### <a id="on_perform_end_act"></a> signal on_perform_end(act: Act)
+Emitted just as [perform](#perform)() has ended, after exiting.
 
 
 ---
@@ -294,7 +294,7 @@ Emitted whenever the act has been blocked/unblocked.
 `Default: func(act: Act) -> Array[Act]: return []`  
 
 Assign this with a function which returns a list of acts, All acts in that list will be performed in parallel before the main act is performed.  
-If the list contains `null` or if any act failed to perform it will be treated as act failed.  
+If the list contains `null` or if any act failed to perform it will be treated as prologuing failed & directly proceeed to [`_exit()`](#_exit) with [`get_outcome()`](#get_outcome) reflecting the failure.  
 ```gdscript
 my_act.prologue = func(act: Act) -> Array[Act]:
 
@@ -330,7 +330,7 @@ func _ready():
 ### <a id="is_verbose"></a> var is_verbose: bool
 `Default: false`  
 
-Controls whether or not to print warnings. Set to `true` to enable them.
+Controls whether or not to print warnings. Set to `false` to silence them.
 
 
 ---
@@ -341,8 +341,8 @@ Controls whether or not to print warnings. Set to `true` to enable them.
 
 `Default: false` 
 
-If `true` then calling `perform()` while act is already performing will finish interruptively current perform and then reperform.  
-If `false` then current ongoing perform must be completed before calling `perform()` again.
+If `true` then calling `perform()` on an ongoing act will abort the act interruptively and then perform.  
+If `false` then current ongoing perform must be completed/aborted manually before calling `perform()` again.
 
 
 ---
@@ -360,8 +360,7 @@ Determines which tick methods are to be called. Look into [`_enter()`](#_enter) 
 
 
 ### <a id="init"></a> func init(name := "", theater: Theater = null, is_initially_enabled := true)
-This method is used to initialize the act & it must be called once before you can call [`perform()`](#perform).  
-Generally this will be called in [`Node._ready()`][Godot-Ready] though it can be used elsewhere if required.  
+This method is used to initialize the act. Generally this will be called in [`Node._ready()`][Godot-Ready] though it can be used elsewhere if required.  
 ```gdscript
 func _ready():
 	theater = get_node("Theater")
@@ -373,7 +372,7 @@ func _ready():
 	my_act.my_var = 10
 	my_act.init("My Act", theater)
 ```
-i.e. You should ideally set all Signals, Prologue, Onetime Properties, etc before you call `init()`.  
+i.e. You should ideally set all Signals, Prologues, Onetime Properties, etc before you call `init()`.  
 Calling `init()` will internally call your overridden `_setup()` method.
 
 
@@ -382,7 +381,6 @@ Calling `init()` will internally call your overridden `_setup()` method.
 
 ### <a id="deinit"></a> func deinit()
 This method is used to deinitialize the act & it must be called before the act is destroyed.  
-After calling this method [`perform()`](#perform) cannot be called unless you intialize again.  
 Generally this will be called in [`Node._exit_tree()`][Godot-ExitTree].  
 ```gdscript
 func _exit_tree():
@@ -407,6 +405,8 @@ func _physics_process(_delta):
 
 
 ### <a id="perform_deferred"></a> func perform_deferred(tick_flag := TickFlags.PHYSICS_TICK)
+> **Note:** Requires a `Theater` to be assigned.
+
 This will delay off the [`perform()`](#perform) until the next tick. Useful to avoid infinite recursion when trying to reperform an act.
 
 
@@ -422,7 +422,7 @@ If the act is not performing this will simply call [`perform()`](#perform).
 
 
 ### <a id="abort"></a> func abort()
-This will finish the act if it's performing with [Outcome.INTERRUPTED](#outcome).  
+This will finish the act if its performing with [Outcome.INTERRUPTED](#outcome).  
 Won't do anything if the act was not performing.
 
 
@@ -484,7 +484,7 @@ Returns `true` if the act has been [initialized](#init). Resets to `false` once 
 
 
 ### <a id="is_initializing"></a> func is_initializing() -> bool
-Returns `true` if the act is currently in between [initializing](#init) or [deinitializing](#deinit).
+Returns `true` if the act is currently in between [`init()`](#init) or [`deinit()`](#deinit).
 
 
 ---
@@ -526,28 +526,32 @@ Returns `true` if the act can tick on the given flag type(s).
 
 
 ### <a id="get_theater"></a> func get_theater() -> Theater
-Returns the `Theater` the act belongs to.
+> **Note:** Requires a `Theater` to be assigned.
+
+Returns the `Theater` the act belongs to. returns null if theater not assigned.
 
 
 ---
 
 
 ### <a id="get_owner"></a> func get_owner() -> Node
-Returns the [node][Godot-Node] the `Theater` is a child of, Returns `null` if theater is not assigned.
+> **Note:** Requires a `Theater` to be assigned.
+
+Returns the [node][Godot-Node] the `Theater` is attached to. Returns null if theater not assigned
 
 
 ---
 
 
 ### <a id="get_blocked_by_acts"></a> func get_blocked_by_acts() -> Dictionary[Act, bool]
-Returns a copy of all the acts currently blocking this act.
+Returns a copy of the set of acts currently blocking this act.
 
 
 ---
 
 
 ### <a id="get_acts_to_block"></a> func get_acts_to_block() -> Dictionary[Act, BlockType]
-Returns a copy of the acts this act will block along with their [`BlockType`](#blocktype).
+Returns a copy of the acts this act will block along with their [`BlockType`](#blocktype), As assigned via [add_to_block](#add_to_block).
 
 
 ---
@@ -562,7 +566,6 @@ Returns the current [Status](#status) of the act.
 
 ### <a id="get_outcome"></a> func get_outcome() -> [Outcome](#outcome)
 Returns the outcome of [`_enter()`](#_enter) or any of the tick methods.  
-However this is only to be used inside the lifecycle methods since [`_exit()`](#_exit) will internally reset the flag.
 
 
 ---
@@ -948,7 +951,7 @@ Returns `true` if any act is currently performing.
 
 
 ### <a id="get_all_acts"></a> func get_all_acts() -> Dictionary[Act, bool]
-Returns a dictionary (treat as a HashSet) of all the acts assigned to the theater.
+Returns all the acts assigned to the theater.
 
 
 
