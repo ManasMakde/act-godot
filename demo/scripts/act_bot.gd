@@ -29,9 +29,9 @@ func handle_animation():
 	var anim_to_play:String
 	if(!is_on_floor()):
 		anim_to_play = jump_anim
-	elif walk_act.did_perform():
+	elif walk_act.did_perform_in_tick():
 		anim_to_play = walk_anim
-	elif run_act.did_perform():
+	elif run_act.did_perform_in_tick():
 		anim_to_play = run_anim
 	else:
 		anim_to_play = idle_anim

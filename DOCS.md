@@ -46,15 +46,14 @@
 |--------|------|--------------|
 | public | void | [init](#init)(name := "", theater: Theater = null, is_initially_enabled := true) |
 | public | void | [deinit](#deinit)() |
-| public | void | [perform](#perform)() |
+| public | bool | [perform](#perform)() |
 | public | void | [perform_deferred](#perform_deferred)(tick_flag := [TickFlags](#tickflags)) |
 | public | void | [retry](#retry)() |
 | public | void | [abort](#abort)() |
 | public | void | [add_to_block](#add_to_block)(acts: Array[Act], block_type := [BlockType](#blocktype)) |
 | public | void | [remove_from_block](#remove_from_block)(acts: Array[Act]) |
 | public | void | [set_enabled](#set_enabled)(new_enabled: bool) |
-| public | bool | [did_perform](#did_perform)(tick_flag := [TickFlags](#tickflags)) |
-| public | bool | [did_perform_ever](#did_perform_ever)() |
+| public | bool | [did_perform_in_tick](#did_perform_in_tick)(tick_flag := [TickFlags](#tickflags)) |
 | public | bool | [has_initialized](#has_initialized)() |
 | public | bool | [is_initializing](#is_initializing)() |
 | public | bool | [is_ongoing](#is_ongoing)() |
@@ -87,6 +86,7 @@
 | protected | void | [_unblock_self](#_unblock_self)(by_act: Act) <abbr title="">Virtual</abbr> |
 | protected | void | [_block_others](#_block_others)() <abbr title="">Virtual</abbr> |
 | protected | void | [_unblock_others](#_unblock_others)() <abbr title="">Virtual</abbr> |
+| protected | void | [_write_log](#_write_log)(message: String, override_name := "") <abbr title="">Virtual</abbr> |
 
 
 <br/>
@@ -395,7 +395,7 @@ Calling `deinit()` will internally call your overridden `_cleanup()` method.
 
 
 ### <a id="perform"></a> func perform()
-Call this method when you want your defined act behaviour to run. This will start the perform lifecycle of the act.  
+Call this method when you want your defined act behaviour to run. This will start the perform lifecycle of the act. Returns `false` if act could not perform.
 ```gdscript
 func _physics_process(_delta):
 	move_act.direction = get_direction()
@@ -462,32 +462,13 @@ my_act.set_enabled(true)  # Enable act
 ---
 
 
-### <a id="did_perform"></a> func did_perform(tick_flag := TickFlags.PHYSICS_TICK) -> bool
+### <a id="did_perform_in_tick"></a> func did_perform_in_tick(tick_flag := TickFlags.PHYSICS_TICK) -> bool
 Returns `true` if the act has performed atleast once in the span of the current tick.  
 ```gdscript
 func _physics_process(_delta):
-	print(my_act.did_perform(Act.TickFlags.PHYSICS_TICK))  # false
+	print(my_act.did_perform_in_tick(Act.TickFlags.PHYSICS_TICK))  # false
 	my_act.perform()
-	print(my_act.did_perform(Act.TickFlags.PHYSICS_TICK))  # true
-```
-
-
----
-
-
-### <a id="did_perform_ever"></a> func did_perform_ever() -> bool
-Returns `true` if the act has performed even once since it was [initialized](#init). Resets after act has been [deinitialized](#deinit).
-```gdscript
-print(my_act.did_perform_ever())  # false
-
-my_act.init("My Act", theater)
-print(my_act.did_perform_ever())  # false
-
-my_act.perform()
-print(my_act.did_perform_ever())  # true
-
-my_act.deinit()
-print(my_act.did_perform_ever())  # false
+	print(my_act.did_perform_in_tick(Act.TickFlags.PHYSICS_TICK))  # true
 ```
 
 
@@ -892,6 +873,13 @@ func _unblock_others():
 
 	# custom functionality
 ```
+
+
+---
+
+
+### <a id="_write_log"></a> func _write_log(message: String, override_name := "")
+Used internally to log warning messages when [is_verbose](#is_verbose) is `true`. Only kept incase some special functionality needs to be hooked when a warning is logged.
 
 
 <br/>

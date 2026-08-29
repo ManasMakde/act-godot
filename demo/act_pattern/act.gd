@@ -174,10 +174,13 @@ func deinit():
 
 	# Broadcast post cleanup
 	on_post_cleanup.emit(self)
-func perform():
+func perform() -> bool:
 
 	if(_can_perform_impl()):
 		_perform_impl()
+		return true
+	
+	return false
 func perform_deferred(tick_flag: TickFlags = TickFlags.PHYSICS_TICK):
 	
 	# Warn if null theater provided
@@ -248,7 +251,7 @@ func set_enabled(new_enabled: bool):
 
 	# Broadcast enabled disabled
 	on_enable_changed.emit(self, is_enabled())
-func did_perform(tick_flag: TickFlags = TickFlags.PHYSICS_TICK) -> bool:
+func did_perform_in_tick(tick_flag: TickFlags = TickFlags.PHYSICS_TICK) -> bool:
 
 	# Return false if no flag provided
 	if(tick_flag == TickFlags.NONE):
