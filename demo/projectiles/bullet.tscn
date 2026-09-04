@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bnrsncfyj03b6"]
+
+[ext_resource type="Script" uid="uid://ckvi843ol06d5" path="res://scripts/projectiles/bullet.gd" id="1_mrqgn"]
+[ext_resource type="Script" uid="uid://c3jbbhjvfc7oh" path="res://scripts/characters/player.gd" id="2_48kph"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plww5"]
+size = Vector2(20, 8)
+
+[node name="Bullet" type="Area2D" unique_id=1406874766]
+collision_layer = 8
+collision_mask = 11
+script = ExtResource("1_mrqgn")
+speed = 1500.0
+damage_amount = 34.0
+ignoreClasses = Array[GDScript]([ExtResource("2_48kph"), null])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=204867627]
+shape = SubResource("RectangleShape2D_plww5")
+
+[node name="Sprite" type="ColorRect" parent="." unique_id=1286491170]
+offset_left = -10.09039
+offset_top = -3.904191
+offset_right = 10.176505
+offset_bottom = 4.076419
+color = Color(0.9921875, 1, 0, 1)

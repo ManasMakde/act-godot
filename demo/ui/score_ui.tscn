@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://b2sdgw2km620t"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0ubw7"]
+content_margin_left = 15.0
+content_margin_top = 0.0
+bg_color = Color(0, 0, 0, 0.40392157)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="ScoreUI" type="Control" unique_id=479721573]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1455.692
+offset_bottom = -822.35876
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScoreLabel" type="Label" parent="." unique_id=1617330772]
+layout_mode = 0
+offset_left = 9.691887
+offset_top = 11.024651
+offset_right = 129.38037
+offset_bottom = 63.28794
+theme_override_styles/normal = SubResource("StyleBoxFlat_0ubw7")
+text = "Score:"
+vertical_alignment = 1
+
+[node name="PointsLabel" type="Label" parent="." unique_id=1007354229]
+layout_mode = 0
+offset_left = 74.800835
+offset_top = 22.55928
+offset_right = 124.800835
+offset_bottom = 50.55928
+theme_override_font_sizes/font_size = 20
+text = "0"
+horizontal_alignment = 1

@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://cg5jffdnmqa74"]
+
+[ext_resource type="Script" uid="uid://d4f4hu4cvmcus" path="res://scripts/projectiles/web.gd" id="1_xq3ye"]
+[ext_resource type="PackedScene" uid="uid://bpgwbga8wmei2" path="res://effects/sticky_effect.tscn" id="2_k7ryp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_k7ryp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k7ryp"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 10
+
+[node name="Web" type="Area2D" unique_id=1406874766]
+collision_layer = 9
+collision_mask = 9
+script = ExtResource("1_xq3ye")
+sticky_scene = ExtResource("2_k7ryp")
+speed = 400.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=204867627]
+shape = SubResource("CircleShape2D_k7ryp")
+
+[node name="Sprite" type="ColorRect" parent="." unique_id=1286491170]
+visible = false
+offset_left = -9.954288
+offset_top = -9.954288
+offset_right = 9.954286
+offset_bottom = 9.954286
+color = Color(0.87109375, 0.87109375, 0.87109375, 1)
+
+[node name="Panel" type="Panel" parent="." unique_id=588121251]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 9.786266
+offset_bottom = 9.555157
+theme_override_styles/panel = SubResource("StyleBoxFlat_k7ryp")

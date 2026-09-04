@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://c7bbgn1ib58xa"]
+
+[ext_resource type="Script" uid="uid://pcmiig24bwy0" path="res://scripts/projectiles/web_line.gd" id="1_is2t7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_is2t7"]
+size = Vector2(10, 10)
+
+[node name="Web_Line" type="Area2D" unique_id=1956958444 node_paths=PackedStringArray("skin")]
+collision_layer = 8
+collision_mask = 4
+script = ExtResource("1_is2t7")
+skin = NodePath("ColorRect")
+speed = 1500.0
+lifetime = -1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1741286138]
+shape = SubResource("RectangleShape2D_is2t7")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=151816902]
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 5.0
+offset_bottom = 5.0

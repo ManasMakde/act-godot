@@ -1,0 +1,190 @@
+[gd_scene format=3 uid="uid://kde6w4740t6k"]
+
+[ext_resource type="Script" uid="uid://n70lrqtqr2sl" path="res://scripts/game_manager.gd" id="1_wdj6m"]
+[ext_resource type="PackedScene" uid="uid://caumnyl5d0auk" path="res://characters/shooter_spider/shooter_spider.tscn" id="3_l8qe7"]
+[ext_resource type="PackedScene" uid="uid://caqjnfe3wsldk" path="res://characters/player/player.tscn" id="3_m1504"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wdj6m"]
+resource_local_to_scene = true
+size = Vector2(1551.8914, 26)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m1504"]
+resource_local_to_scene = true
+size = Vector2(899.9625, 26)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ifaiv"]
+resource_local_to_scene = true
+size = Vector2(899.9625, 26)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5k4jt"]
+resource_local_to_scene = true
+size = Vector2(1551.8914, 26)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l8qe7"]
+size = Vector2(452.95837, 16)
+
+[node name="Main" type="Node2D" unique_id=638408645]
+script = ExtResource("1_wdj6m")
+
+[node name="Environment" type="Node2D" parent="." unique_id=1901782337]
+scale = Vector2(1.031, 1)
+
+[node name="Ground" type="StaticBody2D" parent="Environment" unique_id=74925795]
+position = Vector2(0, 887)
+collision_layer = 31
+collision_mask = 31
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Ground" unique_id=1005281114]
+position = Vector2(775.9457, 0)
+shape = SubResource("RectangleShape2D_wdj6m")
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Ground" unique_id=387284128]
+offset_top = -13.0
+offset_right = 1551.8914
+offset_bottom = 13.0
+
+[node name="Wall 1" type="StaticBody2D" parent="Environment" unique_id=851577970]
+position = Vector2(-13.014801, 899.9884)
+rotation = -1.5707964
+collision_layer = 31
+collision_mask = 31
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Wall 1" unique_id=1332179363]
+position = Vector2(449.98126, -6.67572e-06)
+shape = SubResource("RectangleShape2D_m1504")
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Wall 1" unique_id=1819395812]
+offset_top = -13.0
+offset_right = 899.9709
+offset_bottom = 13.0
+
+[node name="Wall 2" type="StaticBody2D" parent="Environment" unique_id=1466476691]
+position = Vector2(1564.8821, 900.00354)
+rotation = -1.5707964
+collision_layer = 31
+collision_mask = 31
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Wall 2" unique_id=518030343]
+position = Vector2(449.98126, -6.67572e-06)
+shape = SubResource("RectangleShape2D_ifaiv")
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Wall 2" unique_id=2017378961]
+offset_top = -13.0
+offset_right = 899.9709
+offset_bottom = 13.0
+
+[node name="Roof" type="StaticBody2D" parent="Environment" unique_id=842197887]
+position = Vector2(0.0013023987, -12.999323)
+collision_layer = 31
+collision_mask = 31
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Roof" unique_id=70695338]
+position = Vector2(775.9457, 0)
+shape = SubResource("RectangleShape2D_5k4jt")
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Roof" unique_id=801281239]
+offset_top = -13.0
+offset_right = 1551.8914
+offset_bottom = 13.0
+
+[node name="Platform 1" type="StaticBody2D" parent="Environment" unique_id=661128991]
+position = Vector2(1043.8223, 569.38947)
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 1" unique_id=79478396]
+position = Vector2(5.3345947, -1)
+shape = SubResource("RectangleShape2D_l8qe7")
+one_way_collision = true
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Platform 1" unique_id=2001331622]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -221.0
+offset_top = -9.0
+offset_right = 232.0
+offset_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Platform 2" type="StaticBody2D" parent="Environment" unique_id=1122468639]
+position = Vector2(1118.062, 202.78973)
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 2" unique_id=425446910]
+position = Vector2(5.3345947, -1)
+shape = SubResource("RectangleShape2D_l8qe7")
+one_way_collision = true
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Platform 2" unique_id=2097909599]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -221.0
+offset_top = -9.0
+offset_right = 232.0
+offset_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Platform 3" type="StaticBody2D" parent="Environment" unique_id=1731727548]
+position = Vector2(436.81656, 379.35175)
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 3" unique_id=258552771]
+position = Vector2(5.3345947, -1)
+shape = SubResource("RectangleShape2D_l8qe7")
+one_way_collision = true
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Platform 3" unique_id=1536964971]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -221.0
+offset_top = -9.0
+offset_right = 232.0
+offset_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Platform 4" type="StaticBody2D" parent="Environment" unique_id=1163383882]
+position = Vector2(398.6421, 708)
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 4" unique_id=493842651]
+position = Vector2(5.3345947, -1)
+shape = SubResource("RectangleShape2D_l8qe7")
+one_way_collision = true
+
+[node name="ColorRect" type="ColorRect" parent="Environment/Platform 4" unique_id=338719102]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -221.0
+offset_top = -9.0
+offset_right = 232.0
+offset_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ShooterSpider" parent="." unique_id=278930334 instance=ExtResource("3_l8qe7")]
+position = Vector2(797.4104, 783.64105)
+
+[node name="Player" parent="." unique_id=1996347715 instance=ExtResource("3_m1504")]
+position = Vector2(510.04813, 310.77017)

@@ -9,8 +9,19 @@ For a complete explaination & implementation in other game engines visit the [ma
 
 
 > ## 🚧 Work in Progress 🚧
-> This repo is still under construction i.e. the demo game & test cases are yet to be added.  
-> However, the core codebase has been completed so feel free to use at your own discretion.
+> This repo is still under construction i.e. test cases are yet to be added.  
+> However, the core codebase & demo game have been completed so feel free to use at your own discretion.
+
+
+<details>
+<summary>Demo Showcase</summary>
+
+![Instruction Screen](raw_assets/showcase/showcase1.png)  
+![In Game Screen](raw_assets/showcase/showcase2.png)  
+![Game Over Screen](raw_assets/showcase/showcase3.png)  
+<video controls src="raw_assets/showcase/showcase_vid.mp4" title="Title"></video>
+
+</details>
 
 
 ## 🛠️ Installation
@@ -41,11 +52,20 @@ If this project has been useful for you consider [supporting][Sponsor] its devel
 Any support motivates to keep the project well maintained, documented & growing.
 
 
+## 🏆 Credits
+1. 3D meshes & animations from [Mesh2Motion][Mesh2Motion].  
+1. Sprite sheets created using [Sprite Sheet Maker][ssm].  
+1. Castle background assets by [Raou][castle-asset].  
+
+
 ## 🔑 License
 MIT © [Manas Ravindra Makde](https://manasmakde.github.io/)
 
 
 [MainRepo]: https://github.com/ManasMakde/act
+[Mesh2Motion]: https://mesh2motion.org/
+[ssm]: https://extensions.blender.org/add-ons/sprite-sheet-maker/
+[castle-asset]: https://raou.itch.io/dark-dun
 [Releases]: https://github.com/ManasMakde/act-godot/releases
 [Issue]: https://github.com/ManasMakde/act-godot/issues/new
 [Sponsor]: https://github.com/sponsors/ManasMakde

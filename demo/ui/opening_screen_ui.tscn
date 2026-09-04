@@ -1,0 +1,399 @@
+[gd_scene format=3 uid="uid://deadtxfl0e5rk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ifaiv"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5k4jt"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.78431374, 0.15686275, 0.15686275, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+corner_detail = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qy63d"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.15686275, 0.627451, 0.27450982, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+corner_detail = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6et1j"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.15686275, 0.39215687, 0.78431374, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+corner_detail = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2kee1"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ppqy1"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+corner_detail = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sjdxk"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 25
+corner_detail = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i4b3p"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_detail = 15
+
+[node name="OpeningScreenUI" type="Control" unique_id=1382440651]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="." unique_id=44415015]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -0.1845913
+offset_right = 0.0013427734
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.9372549)
+
+[node name="InstructionsLabel" type="Label" parent="." unique_id=2057336767]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -148.7633
+offset_top = 39.79077
+offset_right = 150.41614
+offset_bottom = 109.79077
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 51
+text = "Instructions"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="Button" parent="." unique_id=1015357674]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -85.95923
+offset_top = -93.93036
+offset_right = 92.72693
+offset_bottom = -37.93988
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_ifaiv")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ifaiv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ifaiv")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_ifaiv")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ifaiv")
+text = "Start Game"
+
+[node name="Divider" type="ColorRect" parent="." unique_id=869790945]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1.7279053
+offset_top = -209.17404
+offset_right = 1.7279053
+offset_bottom = 209.17404
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RedCircle" type="Panel" parent="." unique_id=1426861545]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 87.733215
+offset_top = -99.772736
+offset_right = 114.8172
+offset_bottom = -73.0405
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_5k4jt")
+
+[node name="Label" type="Label" parent="RedCircle" unique_id=1111963370]
+layout_mode = 0
+offset_left = 48.781372
+offset_top = -1.9222412
+offset_right = 346.78137
+offset_bottom = 29.077759
+theme_override_font_sizes/font_size = 22
+text = "The red spiders will bite you"
+
+[node name="GreenCircle" type="Panel" parent="." unique_id=1323436180]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 88.10101
+offset_top = -24.690247
+offset_right = 115.185
+offset_bottom = 2.0420532
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qy63d")
+
+[node name="Label" type="Label" parent="GreenCircle" unique_id=2098802818]
+layout_mode = 0
+offset_left = 48.781372
+offset_top = -1.9222412
+offset_right = 346.78137
+offset_bottom = 29.077759
+theme_override_font_sizes/font_size = 22
+text = "The green spiders will bite and poison you"
+
+[node name="BlueCircle" type="Panel" parent="." unique_id=189624234]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 89.18939
+offset_top = 51.791138
+offset_right = 116.27338
+offset_bottom = 78.52344
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6et1j")
+
+[node name="Label" type="Label" parent="BlueCircle" unique_id=50580945]
+layout_mode = 0
+offset_left = 48.781372
+offset_top = -1.9222412
+offset_right = 346.78137
+offset_bottom = 29.077759
+theme_override_font_sizes/font_size = 22
+text = "The blue spiders will shoot webs and trap you"
+
+[node name="ArrowKeys" type="Control" parent="." unique_id=1730153019]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -594.4246
+offset_top = -32.210144
+offset_right = -594.4246
+offset_bottom = -32.210144
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UpKey" type="Panel" parent="ArrowKeys" unique_id=466758920]
+layout_mode = 0
+offset_left = -23.072784
+offset_top = -53.99878
+offset_right = 26.861954
+offset_bottom = -7.789551
+theme_override_styles/panel = SubResource("StyleBoxFlat_2kee1")
+
+[node name="Arrow" type="Polygon2D" parent="ArrowKeys/UpKey" unique_id=1733002566]
+position = Vector2(15.033295, 31.554962)
+rotation = -0.7853982
+scale = Vector2(1.5, 1.5)
+antialiased = true
+polygon = PackedVector2Array(11, -3, 0, 0, 8, 8)
+
+[node name="DownKey" type="Panel" parent="ArrowKeys" unique_id=1073958751]
+layout_mode = 0
+offset_left = -22.783112
+offset_top = 3.5240479
+offset_right = 27.151627
+offset_bottom = 49.733276
+theme_override_styles/panel = SubResource("StyleBoxFlat_2kee1")
+
+[node name="Arrow" type="Polygon2D" parent="ArrowKeys/DownKey" unique_id=1251305524]
+position = Vector2(34.208313, 17.433807)
+rotation = 2.3561945
+scale = Vector2(1.5, 1.5)
+antialiased = true
+polygon = PackedVector2Array(11, -3, 0, 0, 8, 8)
+
+[node name="RightKey" type="Panel" parent="ArrowKeys" unique_id=1273493593]
+layout_mode = 0
+offset_left = 37.565216
+offset_top = 4.4371643
+offset_right = 87.499954
+offset_bottom = 50.646393
+theme_override_styles/panel = SubResource("StyleBoxFlat_2kee1")
+
+[node name="Arrow" type="Polygon2D" parent="ArrowKeys/RightKey" unique_id=2053190780]
+position = Vector2(18.68686, 14.550201)
+rotation = 0.7853982
+scale = Vector2(1.5, 1.5)
+antialiased = true
+polygon = PackedVector2Array(11, -3, 0, 0, 8, 8)
+
+[node name="LeftKey" type="Panel" parent="ArrowKeys" unique_id=1440040719]
+layout_mode = 0
+offset_left = -84.410065
+offset_top = 3.6281738
+offset_right = -34.475327
+offset_bottom = 49.837402
+theme_override_styles/panel = SubResource("StyleBoxFlat_2kee1")
+
+[node name="Arrow" type="Polygon2D" parent="ArrowKeys/LeftKey" unique_id=356381557]
+position = Vector2(30.575836, 34.126923)
+rotation = -2.3561945
+scale = Vector2(1.5, 1.5)
+antialiased = true
+polygon = PackedVector2Array(11, -3, 0, 0, 8, 8)
+
+[node name="ArrowKeysLabel" type="Label" parent="ArrowKeys" unique_id=2060675378]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -91.47586
+offset_top = 71.777405
+offset_right = 98.52414
+offset_bottom = 148.2193
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 22
+text = "Use arrow keys to
+move around"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Mouse" type="Control" parent="." unique_id=1818714812]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MouseOutline" type="Panel" parent="Mouse" unique_id=2115022552]
+layout_mode = 0
+offset_left = -295.3379
+offset_top = -89.23489
+offset_right = -227.03644
+offset_bottom = 19.331207
+theme_override_styles/panel = SubResource("StyleBoxFlat_ppqy1")
+
+[node name="MouseLeftKey" type="Panel" parent="Mouse" unique_id=320295164]
+layout_mode = 0
+offset_left = -295.3379
+offset_top = -89.23489
+offset_right = -260.49774
+offset_bottom = -49.344543
+theme_override_styles/panel = SubResource("StyleBoxFlat_sjdxk")
+
+[node name="MouseDivider" type="Panel" parent="Mouse" unique_id=1301684019]
+layout_mode = 0
+offset_left = -295.29504
+offset_top = -49.532898
+offset_right = -228.12592
+offset_bottom = -45.870453
+theme_override_styles/panel = SubResource("StyleBoxFlat_i4b3p")
+
+[node name="MouseLabel" type="Label" parent="Mouse" unique_id=1675106640]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -368.0139
+offset_top = 48.754364
+offset_right = -152.01389
+offset_bottom = 106.754364
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 22
+text = "Use left mouse click 
+to shoot"
+horizontal_alignment = 1
+vertical_alignment = 1

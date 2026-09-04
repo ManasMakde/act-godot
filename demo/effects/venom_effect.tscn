@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://qqm2o2ypvikk"]
+
+[ext_resource type="Script" uid="uid://duwuh4dp4slvw" path="res://scripts/effects/venom_effect.gd" id="1_wx1ok"]
+
+[node name="VenomEffect" type="Node2D" unique_id=851212874]
+script = ExtResource("1_wx1ok")
+damage_amount = 2.5

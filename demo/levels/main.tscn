@@ -1,123 +1,198 @@
 [gd_scene format=3 uid="uid://kde6w4740t6k"]
 
-[ext_resource type="PackedScene" uid="uid://caqjnfe3wsldk" path="res://characters/act_bot/act_bot.tscn" id="1_2262g"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2262g"]
-size = Vector2(1202, 48)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_m1504"]
-size = Vector2(1202, 49)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_qy63d"]
-size = Vector2(126, 13.5)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5k4jt"]
-size = Vector2(126, 13.5)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6et1j"]
-size = Vector2(126, 13.5)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ifaiv"]
-size = Vector2(126, 13.5)
+[ext_resource type="Script" uid="uid://n70lrqtqr2sl" path="res://scripts/game_manager.gd" id="1_wdj6m"]
+[ext_resource type="PackedScene" uid="uid://caqjnfe3wsldk" path="res://characters/player/player.tscn" id="3_m1504"]
+[ext_resource type="PackedScene" uid="uid://crte3mlwkbhva" path="res://characters/biter_spider/biter_spider.tscn" id="4_ifaiv"]
+[ext_resource type="PackedScene" uid="uid://c8m31w3pe4g51" path="res://characters/venomous_spider/venomous_spider.tscn" id="5_5k4jt"]
+[ext_resource type="PackedScene" uid="uid://deadtxfl0e5rk" path="res://ui/opening_screen_ui.tscn" id="5_qy63d"]
+[ext_resource type="PackedScene" uid="uid://b2sdgw2km620t" path="res://ui/score_ui.tscn" id="6_qy63d"]
+[ext_resource type="PackedScene" uid="uid://crmum532e3vqo" path="res://ui/game_over_ui.tscn" id="7_6et1j"]
+[ext_resource type="PackedScene" uid="uid://caumnyl5d0auk" path="res://characters/shooter_spider/shooter_spider.tscn" id="8_6et1j"]
+[ext_resource type="Texture2D" uid="uid://cmlkbuea5cwmx" path="res://levels/background_image.png" id="9_etqu2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wdj6m"]
-size = Vector2(671, 49)
+resource_local_to_scene = true
+size = Vector2(1551.8914, 15.859528)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_l8qe7"]
-size = Vector2(671, 49)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m1504"]
+resource_local_to_scene = true
+size = Vector2(899.9625, 26)
 
-[node name="Main" type="Node2D" unique_id=638408645]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ifaiv"]
+resource_local_to_scene = true
+size = Vector2(899.9625, 26)
 
-[node name="Base" type="StaticBody2D" parent="." unique_id=74925795]
-position = Vector2(-22, 622)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5k4jt"]
+resource_local_to_scene = true
+size = Vector2(1551.8914, 26)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Base" unique_id=1005281114]
-position = Vector2(601, 25)
-shape = SubResource("RectangleShape2D_2262g")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6et1j"]
+size = Vector2(326.12192, 11.9549675)
 
-[node name="ColorRect" type="ColorRect" parent="Base" unique_id=387284128]
-offset_right = 1202.0
-offset_bottom = 49.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_etqu2"]
+size = Vector2(350.0725, 12.2090225)
 
-[node name="Roof" type="StaticBody2D" parent="." unique_id=702198562]
-position = Vector2(-22, -27)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jw1n3"]
+size = Vector2(520.1696, 12.02054)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Roof" unique_id=696731160]
-position = Vector2(601, 24.5)
-shape = SubResource("RectangleShape2D_m1504")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xdh4e"]
+size = Vector2(323.86978, 12.6364765)
 
-[node name="ColorRect" type="ColorRect" parent="Roof" unique_id=18024550]
-offset_right = 1202.0
-offset_bottom = 49.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c7dyn"]
+size = Vector2(320.82672, 11.99904)
 
-[node name="Platform1" type="StaticBody2D" parent="." unique_id=718126007]
-position = Vector2(1005, 457)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1fput"]
+size = Vector2(894.763, 11.636141)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1" unique_id=124065413]
-position = Vector2(64, 7.25)
-shape = SubResource("RectangleShape2D_qy63d")
+[node name="Main" type="Node2D" unique_id=638408645 node_paths=PackedStringArray("opening_screen_ui", "score_ui", "game_over_ui", "start_button", "restart_button", "points_label")]
+script = ExtResource("1_wdj6m")
+spider_scenes = Array[PackedScene]([ExtResource("4_ifaiv"), ExtResource("5_5k4jt"), ExtResource("8_6et1j")])
+min_platform_count = 2
+max_platform_count = 5
+opening_screen_ui = NodePath("UI/OpeningScreenUI")
+score_ui = NodePath("UI/ScoreUI")
+game_over_ui = NodePath("UI/GameOverUI")
+start_button = NodePath("UI/OpeningScreenUI/StartButton")
+restart_button = NodePath("UI/GameOverUI/RestartButton")
+points_label = NodePath("UI/ScoreUI/PointsLabel")
 
-[node name="ColorRect" type="ColorRect" parent="Platform1" unique_id=1713108757]
-offset_right = 127.0
-offset_bottom = 14.0
+[node name="UI" type="Control" parent="." unique_id=1276947608]
+z_index = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 0.1845913
+offset_right = 1600.0
+offset_bottom = 900.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/_edit_lock_ = true
 
-[node name="Platform2" type="StaticBody2D" parent="." unique_id=775598219]
-position = Vector2(675, 345)
+[node name="OpeningScreenUI" parent="UI" unique_id=1382440651 instance=ExtResource("5_qy63d")]
+visible = false
+layout_mode = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2" unique_id=501943454]
-position = Vector2(64, 7.25)
-shape = SubResource("RectangleShape2D_5k4jt")
+[node name="GameOverUI" parent="UI" unique_id=1416962027 instance=ExtResource("7_6et1j")]
+visible = false
+layout_mode = 1
 
-[node name="ColorRect" type="ColorRect" parent="Platform2" unique_id=1809921397]
-offset_right = 127.0
-offset_bottom = 14.0
+[node name="ScoreUI" parent="UI" unique_id=479721573 instance=ExtResource("6_qy63d")]
+visible = false
+layout_mode = 1
 
-[node name="Platform3" type="StaticBody2D" parent="." unique_id=693087668]
-position = Vector2(324, 345)
+[node name="Environment" type="Node2D" parent="." unique_id=1901782337]
+scale = Vector2(1.031, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3" unique_id=447843323]
-position = Vector2(64, 7.25)
-shape = SubResource("RectangleShape2D_6et1j")
+[node name="Background" type="Sprite2D" parent="Environment" unique_id=972794692]
+z_index = -999
+scale = Vector2(0.9699321, 1)
+texture = ExtResource("9_etqu2")
+centered = false
 
-[node name="ColorRect" type="ColorRect" parent="Platform3" unique_id=672358158]
-offset_right = 127.0
-offset_bottom = 14.0
-metadata/_edit_use_anchors_ = true
+[node name="Ground" type="StaticBody2D" parent="Environment" unique_id=74925795 groups=["platform"]]
+position = Vector2(0, 887)
+collision_layer = 31
+collision_mask = 31
 
-[node name="Platform4" type="StaticBody2D" parent="." unique_id=22975329]
-position = Vector2(27, 236)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform4" unique_id=388493360]
-position = Vector2(64, 7.25)
-shape = SubResource("RectangleShape2D_ifaiv")
-
-[node name="ColorRect" type="ColorRect" parent="Platform4" unique_id=360399809]
-offset_right = 127.0
-offset_bottom = 14.0
-
-[node name="Wall1" type="StaticBody2D" parent="." unique_id=1525188313]
-position = Vector2(-22, 622)
-rotation = -1.5707964
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall1" unique_id=945527670]
-position = Vector2(286.5, 24.500025)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Ground" unique_id=1005281114]
+position = Vector2(775.9457, 5.0701904)
 shape = SubResource("RectangleShape2D_wdj6m")
 
-[node name="ColorRect" type="ColorRect" parent="Wall1" unique_id=927648990]
-offset_right = 621.7351
-offset_bottom = 49.0
-
-[node name="Wall2" type="StaticBody2D" parent="." unique_id=218511740]
-position = Vector2(1131, 622)
+[node name="Wall 1" type="StaticBody2D" parent="Environment" unique_id=851577970]
+position = Vector2(-13.014801, 899.9884)
 rotation = -1.5707964
+collision_layer = 31
+collision_mask = 31
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2" unique_id=1714539455]
-position = Vector2(286.5, 24.5)
-shape = SubResource("RectangleShape2D_l8qe7")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Wall 1" unique_id=1332179363]
+position = Vector2(449.98126, -6.67572e-06)
+shape = SubResource("RectangleShape2D_m1504")
 
-[node name="ColorRect" type="ColorRect" parent="Wall2" unique_id=2079618363]
-offset_right = 621.7351
-offset_bottom = 49.0
+[node name="Wall 2" type="StaticBody2D" parent="Environment" unique_id=1466476691]
+position = Vector2(1564.8821, 900.00354)
+rotation = -1.5707964
+collision_layer = 31
+collision_mask = 31
 
-[node name="ActBot" parent="." unique_id=1996347715 instance=ExtResource("1_2262g")]
-position = Vector2(306, 622)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Wall 2" unique_id=518030343]
+position = Vector2(449.98126, -6.67572e-06)
+shape = SubResource("RectangleShape2D_ifaiv")
+
+[node name="Roof" type="StaticBody2D" parent="Environment" unique_id=842197887]
+position = Vector2(0.0013023987, -12.999323)
+collision_layer = 31
+collision_mask = 31
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Roof" unique_id=70695338]
+position = Vector2(775.9457, 0)
+shape = SubResource("RectangleShape2D_5k4jt")
+
+[node name="Platform 1" type="StaticBody2D" parent="Environment" unique_id=52590542 groups=["platform"]]
+position = Vector2(23.483906, 0)
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 1" unique_id=1874462685]
+position = Vector2(1136.8549, 694.02277)
+shape = SubResource("RectangleShape2D_6et1j")
+one_way_collision = true
+
+[node name="Platform 2" type="StaticBody2D" parent="Environment" unique_id=1343963979 groups=["platform"]]
+position = Vector2(-0.96551746, 0)
+scale = Vector2(0.9699321, 1)
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 2" unique_id=713226037]
+position = Vector2(176.05344, 691.0394)
+shape = SubResource("RectangleShape2D_etqu2")
+one_way_collision = true
+
+[node name="Platform 3" type="StaticBody2D" parent="Environment" unique_id=307865749 groups=["platform"]]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 3" unique_id=2045008959]
+position = Vector2(800.0537, 522.00183)
+shape = SubResource("RectangleShape2D_jw1n3")
+one_way_collision = true
+
+[node name="Platform 4" type="StaticBody2D" parent="Environment" unique_id=1625935747 groups=["platform"]]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 4" unique_id=2100620442]
+position = Vector2(269.92966, 414.2755)
+shape = SubResource("RectangleShape2D_xdh4e")
+one_way_collision = true
+
+[node name="Platform 5" type="StaticBody2D" parent="Environment" unique_id=180183966 groups=["platform"]]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 5" unique_id=228381251]
+position = Vector2(1391.4396, 351.08603)
+shape = SubResource("RectangleShape2D_c7dyn")
+one_way_collision = true
+
+[node name="Platform 6" type="StaticBody2D" parent="Environment" unique_id=590452131 groups=["platform"]]
+position = Vector2(333.04712, 187.46196)
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Environment/Platform 6" unique_id=840270152]
+position = Vector2(447.3847, 14.525726)
+shape = SubResource("RectangleShape2D_1fput")
+one_way_collision = true
+
+[node name="Player" parent="." unique_id=1996347715 instance=ExtResource("3_m1504")]
+position = Vector2(731.9382, 806.06964)
+jump_velocity = -1000.0
+gravity = 2100.0
+
+[editable path="UI/OpeningScreenUI"]
+[editable path="UI/GameOverUI"]
+[editable path="UI/ScoreUI"]
