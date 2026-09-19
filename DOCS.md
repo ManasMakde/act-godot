@@ -1,4 +1,4 @@
-# 🎭 Act Godot Documentation v0.3.0-alpha
+# 🎭 Act Godot Documentation v0.4.0-alpha
 
 ## ⚙️ Act Class
 
