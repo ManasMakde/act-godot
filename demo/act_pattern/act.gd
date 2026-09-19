@@ -54,6 +54,8 @@ enum BlockType {
 # Public
 signal on_pre_setup(act: Act)
 signal on_post_setup(act: Act)
+signal on_pre_perform_req(act: Act)
+signal on_post_perform_req(act: Act, will_perform: bool)
 signal on_perform_start(act: Act)
 signal on_pre_prologue(act: Act)
 signal on_prologue_complete(act: Act, p_act: Act, p_outcome: Outcome)
@@ -176,11 +178,7 @@ func deinit():
 	on_post_cleanup.emit(self)
 func perform() -> bool:
 
-	if(_can_perform_impl()):
-		_perform_impl()
-		return true
-	
-	return false
+	return _perform_impl()
 func perform_deferred(tick_flag: TickFlags = TickFlags.PHYSICS_TICK):
 	
 	# Warn if null theater provided
@@ -209,7 +207,7 @@ func add_to_block(acts: Array[Act], block_type: BlockType = BlockType.PERSISTENT
 		
 		# Skip if self (reserved for enable/disable) or null
 		if(b_act == self || b_act == null):
-			_write_log("Trying to block self!")
+			_write_log("Trying to block self or another invalid act!")
 			continue
 
 
@@ -225,7 +223,7 @@ func remove_from_block(acts: Array[Act]):
 
 		# Skip if self (reserved for enable/disable) or null
 		if(b_act == self || b_act == null):
-			_write_log("Trying to unblock self!")
+			_write_log("Trying to unblock self or another invalid act!")
 			continue
 
 
@@ -270,6 +268,8 @@ func has_initialized() -> bool:
 	return _has_initialized
 func is_initializing() -> bool:
 	return _is_initializing
+func is_retrying() -> bool:
+	return _is_retrying
 func is_ongoing() -> bool:
 	return _status != Status.NONE
 func is_active() -> bool:
@@ -314,7 +314,7 @@ func get_physics_delta() -> float:
 	return _theater.get_physics_process_delta_time() if _theater != null else 0.0
 func get_name() -> String:
 	return _name
-static func seq(p_arrays:Array[Array]) -> Array:
+static func seq(p_arrays) -> Array:
 
 	# Return if null
 	if(p_arrays == null):
@@ -332,7 +332,7 @@ static func seq(p_arrays:Array[Array]) -> Array:
 
 
 	# Return if empty list
-	var p_length := p_arrays.size()
+	var p_length:int = p_arrays.size()
 	if(p_length == 0):
 		return []
 
@@ -451,6 +451,7 @@ var _blocked_by_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 
 var _epilogue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 var _pending_epilogue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
+var _continue_epilogue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 
 var _prologue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 var _pending_prologue_acts: Dictionary[Act, bool] = {}  # (Treat as HashSet)
@@ -461,6 +462,7 @@ var _visited_top_epilogues: Dictionary[Act, bool] = {}  # (Treat as HashSet)
 
 var _has_initialized := false
 var _is_initializing := false
+var _is_retrying := false
 var _has_precomputed_prologues := false
 
 var _perform_count := 0
@@ -549,12 +551,12 @@ static func _finish_prologues(of_act: Act, new_outcome: Outcome):
 		of_act._pending_prologue_acts.erase(p_act)
 		if(p_act != null):
 			p_act._finish(p_outcome)
-static func _continue_epilogues(of_act: Act, new_outcome: Outcome):
+static func _continue_epilogues(of_act: Act, pending_epilogue_acts: Dictionary[Act, bool], new_outcome: Outcome):
 
 	# Continue and clear out epilogues
-	while(!of_act._pending_epilogue_acts.is_empty()):
-		var e_act := _get_first(of_act._pending_epilogue_acts)
-		of_act._pending_epilogue_acts.erase(e_act)
+	while(!pending_epilogue_acts.is_empty()):
+		var e_act := _get_first(pending_epilogue_acts)
+		pending_epilogue_acts.erase(e_act)
 		e_act._completed_prologue_acts[of_act] = true
 		e_act._completed_prologue(of_act, new_outcome)
 static func _clear_prologue_chain(of_act: Act):
@@ -600,7 +602,7 @@ static func _does_overlap(a: Dictionary[Act, bool], b: Dictionary[Act, bool]) ->
 			return true
 	
 	return false
-func _can_perform_impl(is_retrying: bool = false) -> bool:
+func _can_perform_impl(new_is_retrying: bool = false) -> bool:
 
 	# Return if in between initialization
 	if(_is_initializing):
@@ -609,7 +611,7 @@ func _can_perform_impl(is_retrying: bool = false) -> bool:
 
 
 	# Return if exiting
-	if(!is_retrying && _status == Status.EXITING):
+	if(!new_is_retrying && _status == Status.EXITING):
 		_write_log("Cannot perform, act is between exiting!")
 		return false
 
@@ -627,7 +629,7 @@ func _can_perform_impl(is_retrying: bool = false) -> bool:
 
 
 	# Return if already ongoing
-	if(!is_retrying && !_can_reperform && is_ongoing()):
+	if(!new_is_retrying && !_can_reperform && is_ongoing()):
 		_write_log("Cannot perform, act is ongoing!")
 		return false
 
@@ -639,7 +641,28 @@ func _can_perform_impl(is_retrying: bool = false) -> bool:
 
 
 	return _can_perform()
-func _perform_impl():
+func _perform_impl(new_is_retrying: bool = false) -> bool:
+
+	# Store retrying status
+	_is_retrying = new_is_retrying
+
+
+	# Broadcast pre perform requested
+	on_pre_perform_req.emit(self)
+
+
+	# Check perform condition
+	var will_perform := _can_perform_impl(new_is_retrying)
+
+
+	# Broadcast post perform requested
+	on_post_perform_req.emit(self, will_perform)
+
+
+	# Return if perform condition failed
+	if(!will_perform):
+		return false
+
 
 	# Finish any ongoing perform
 	if(_status != Status.NONE):
@@ -659,6 +682,9 @@ func _perform_impl():
 
 	# Start prologuing
 	_redirect(Status.PROLOGUING)
+
+
+	return true
 func _prologue_impl():
 
 	# Broadcast perform start
@@ -726,17 +752,22 @@ func _prologue_impl():
 			continue
 
 
+		# Mark prologue as pending
+		_prologue_acts.erase(p_act)
+		_pending_prologue_acts[p_act] = true
+
+
 		# Perform prologue
-		if(p_act._can_perform_impl()):
-			_prologue_acts.erase(p_act)
-			_pending_prologue_acts[p_act] = true
-			p_act._perform_impl()
-			continue
+		if(!p_act._perform_impl()):
+
+			# Revert pending
+			_pending_prologue_acts.erase(p_act)
+			_prologue_acts[p_act] = true
 
 
-		# Exit with failure if failed to perform
-		_redirect(Status.EXITING, Outcome.FAILURE)
-		return
+			# Exit with failure if failed to perform prologue
+			_redirect(Status.EXITING, Outcome.FAILURE)
+			return
 func _completed_prologue(p_act: Act, new_outcome: Outcome):
 
 	# Guard
@@ -744,7 +775,7 @@ func _completed_prologue(p_act: Act, new_outcome: Outcome):
 		return
 
 
-	# Remove from pending and move to completed
+	# Remove from pending
 	_pending_prologue_acts.erase(p_act)
 
 
@@ -917,33 +948,44 @@ func _exit_impl():
 	# Cleanup prologues
 	_finish_prologues(self, _outcome)
 	_clear_prologue_chain(self)
-	_has_precomputed_prologues = false
+	_epilogue_acts.clear()
 	_prologue_acts.clear()
 	_pending_prologue_acts.clear()
 	_completed_prologue_acts.clear()
+	_has_precomputed_prologues = false
 
 
 	# Retry
 	if(_outcome == Outcome.RETRY):
-		if(_can_perform_impl(true)):
-			_status = Status.NONE
-			_perform_impl()
+		
+		# Reset status
+		_status = Status.NONE
+
+
+		# Retry performing
+		if(_perform_impl(true)):
 			return
 
 
-		# Change outcome to failure since could not retry
+		# Revert status & Change outcome to failure since could not retry
+		_status = Status.EXITING
 		_outcome = Outcome.FAILURE
 
 
-	# Unblock & Continue Epilogues
+	# Unblock
 	_unblock_others()
-	_continue_epilogues(self, _outcome)
-	_epilogue_acts.clear()
-	_pending_epilogue_acts.clear()
+
+
+	# Prerequisites for epilogue
+	var epilogue_outcome := _outcome
+	var pending_epilogue_acts := _pending_epilogue_acts
+	_pending_epilogue_acts = _continue_epilogue_acts
+	_continue_epilogue_acts = pending_epilogue_acts
 
 
 	# Reset status
 	_status = Status.NONE
+	_is_retrying = false
 
 
 	# Let theater know this act has ended
@@ -953,6 +995,10 @@ func _exit_impl():
 
 	# Broadcast perform end
 	on_perform_end.emit(self)
+
+
+	# Continue epilogues
+	_continue_epilogues(self, pending_epilogue_acts, epilogue_outcome)
 func _redirect(new_status: Status, new_outcome: Outcome = Outcome.PENDING):
 
 	# None -> prologue

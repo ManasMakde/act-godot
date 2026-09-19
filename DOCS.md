@@ -14,6 +14,8 @@
 |--------------|-------|
 | \(act: Act\) | [on_pre_setup](#on_pre_setup) |
 | \(act: Act\) | [on_post_setup](#on_post_setup) |
+| \(act: Act\) | [on_pre_perform_req](#on_pre_perform_req) |
+| \(act: Act,<br> will_perform: bool\) | [on_post_perform_req](#on_post_perform_req) |
 | \(act: Act\) | [on_perform_start](#on_perform_start_act) |
 | \(act: Act\) | [on_pre_prologue](#on_pre_prologue) |
 | \(act: Act,<br> p_act: Act,<br> [p_outcome](#outcome): Outcome\) | [on_prologue_complete](#on_prologue_complete) |
@@ -56,6 +58,7 @@
 | public | bool | [did_perform_in_tick](#did_perform_in_tick)(tick_flag := [TickFlags](#tickflags)) |
 | public | bool | [has_initialized](#has_initialized)() |
 | public | bool | [is_initializing](#is_initializing)() |
+| public | bool | [is_retrying](#is_retrying)() |
 | public | bool | [is_ongoing](#is_ongoing)() |
 | public | bool | [is_active](#is_active)() |
 | public | bool | [is_enabled](#is_enabled)() |
@@ -164,6 +167,21 @@ Emitted just before [_setup](#_setup)() method is called.
 
 ### <a id="on_post_setup"></a> signal on_post_setup(act: Act)
 Emitted just after [_setup](#_setup)() method has been called.
+
+
+---
+
+
+### <a id="on_pre_perform_req"></a> signal on_pre_perform_req(act: Act)
+Emitted whenever a perform is requested, before checking if the act can perform.
+
+
+---
+
+
+### <a id="on_post_perform_req"></a> signal on_post_perform_req(act: Act, will_perform: bool)
+Emitted whenever a perform is requested, after checking if the act can perform.  
+`will_perform` is `true` if the perform condition is met.
 
 
 ---
@@ -393,7 +411,7 @@ Calling `deinit()` will internally call your overridden `_cleanup()` method.
 
 
 ### <a id="perform"></a> func perform()
-Call this method when you want your defined act behaviour to run. This will start the perform lifecycle of the act. Returns `false` if act could not perform.
+Call this method when you want your defined act behaviour to run. This will start the perform lifecycle of the act. Returns `false` if act could not perform.  
 ```gdscript
 func _physics_process(_delta):
 	move_act.direction = get_direction()
@@ -485,6 +503,13 @@ Returns `true` if the act has been [initialized](#init). Resets to `false` once 
 
 ### <a id="is_initializing"></a> func is_initializing() -> bool
 Returns `true` if the act is currently in between [`init()`](#init) or [`deinit()`](#deinit).
+
+
+---
+
+
+### <a id="is_retrying"></a> func is_retrying() -> bool
+Returns `true` if the act is currently performing due to a retry.
 
 
 ---
