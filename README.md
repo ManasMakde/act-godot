@@ -2,15 +2,11 @@
 
 [![Godot Engine](https://img.shields.io/badge/Godot-478CBF?style=flat&logo=godotengine&logoColor=white)](https://godotengine.org)
 ![Status: Alpha](https://img.shields.io/badge/status-0.4.0--alpha-orange)
+![Tests](https://img.shields.io/badge/tests-included-lightgrey)
 ![License](https://img.shields.io/github/license/ManasMakde/act-godot?style=flat&color=yellow)
 
 This is the godot implementation of the **Act Pattern**.  
 For a complete explaination & implementation in other game engines visit the [main repository][MainRepo].
-
-
-> ## 🚧 Work in Progress 🚧
-> This repo is still under construction i.e. test cases are yet to be added.  
-> However, the core codebase & demo game have been completed so feel free to use at your own discretion.
 
 
 <details>
