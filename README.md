@@ -22,6 +22,8 @@ For a complete explaination & implementation in other game engines visit the [ma
 
 ## 🛠️ Installation
 If you want to use the act pattern in your project install the desired version from the [releases page][Releases] & drop the 2 files anywhere in your project.  
+If you want to play the demo game clone this entire repository & open in godot v4.7.stable or just play the browser version on [itch.io][web-game].  
+
 
 > **Note**:  
 > If you just want to view the code, Look into these 2 files:  
@@ -59,6 +61,7 @@ MIT © [Manas Ravindra Makde](https://manasmakde.github.io/)
 
 
 [MainRepo]: https://github.com/ManasMakde/act
+[web-game]: https://manas-makde.itch.io/act-godot-demo
 [Mesh2Motion]: https://mesh2motion.org/
 [ssm]: https://extensions.blender.org/add-ons/sprite-sheet-maker/
 [castle-asset]: https://raou.itch.io/dark-dun
